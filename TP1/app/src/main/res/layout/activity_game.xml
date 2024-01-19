@@ -5,6 +5,16 @@
     android:layout_height="match_parent"
     android:background="@drawable/wood_background">
 
+    <GridLayout
+        android:id="@+id/puzzle_grid"
+        android:layout_width="600dp"
+        android:layout_height="700dp"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:columnCount="6"
+        android:rowCount="6">
+    </GridLayout>
+
     <TextView
         android:id="@+id/puzzle"
         android:layout_width="wrap_content"

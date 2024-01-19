@@ -13,4 +13,7 @@
     <string name="puzzle">Puzzle</string>
     <string name="moves">Moves</string>
     <string name="record">Record:</string>
+    <string name="puzzle_solved">Puzzle solved!</string>
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
