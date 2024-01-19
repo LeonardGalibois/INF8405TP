@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_main"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerHorizontal="true"
+    android:background="@drawable/wood_background">
+
+    <TextView
+        android:id="@+id/game_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="200dp"
+        android:text="@string/game_title"
+        android:textSize="100sp"
+        android:textColor="@color/black"/>
+
+    <Button
+        android:id="@+id/play_button"
+        android:layout_width="500dp"
+        android:layout_height="100dp"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="25dp"
+        android:text="@string/play_button"
+        android:textSize="50sp"
+        android:textColor="@color/white"
+        android:background="@color/green"/>
+
+    <Button
+        android:id="@+id/about_button"
+        android:layout_width="500dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="25dp"
+        android:layout_below="@id/play_button"
+        android:text="@string/about_button"
+        android:textSize="50sp"
+        android:textColor="@color/white"
+        android:background="@color/blue"/>
+
+    <Button
+        android:id="@+id/exit_button"
+        android:layout_width="500dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/about_button"
+        android:text="@string/exit_button"
+        android:textSize="50sp"
+        android:textColor="@color/white"
+        android:background="@color/red"/>
+</RelativeLayout>

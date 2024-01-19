@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">TP1</string>
+    <string name="game_title">Unblock Me!</string>
+    <string name="play_button">Play</string>
+    <string name="about_button">About</string>
+    <string name="exit_button">Exit</string>
+    <string name="team_members">Team members:</string>
+    <string name="member1">Léonard Galibois</string>
+    <string name="member2">Matis Grégoire</string>
+    <string name="member3">Abdelkrim Nahi</string>
+    <string name="member4">Mikael Potvin</string>
+    <string name="title_activity_game">GameActivity</string>
+    <string name="puzzle">Puzzle</string>
+    <string name="moves">Moves</string>
+    <string name="record">Record:</string>
 </resources>

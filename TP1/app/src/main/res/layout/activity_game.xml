@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/wood_background">
+
+    <TextView
+        android:id="@+id/puzzle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="150dp"
+        android:layout_marginTop="50dp"
+        android:text="@string/puzzle"
+        android:textSize="50sp"
+        android:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/puzzle_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/puzzle"
+        android:layout_marginStart="220dp"
+        android:text="1"
+        android:textSize="50sp"
+        android:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/moves"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="150dp"
+        android:layout_marginTop="50dp"
+        android:text="@string/moves"
+        android:textSize="50sp"
+        android:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/moves_counter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="200dp"
+        android:layout_below="@id/moves"
+        android:text="0"
+        android:textSize="50sp"
+        android:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/record"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="200dp"
+        android:layout_below="@id/moves_counter"
+        android:text="@string/record"
+        android:textSize="40sp"
+        android:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/puzzle_record"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/moves_counter"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="150dp"
+        android:text="--"
+        android:textColor="@color/white"
+        android:textSize="40sp" />
+
+
+    <TextView
+        android:id="@+id/puzzle_minimum_moves"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/moves_counter"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="75dp"
+        android:text="/min"
+        android:textColor="@color/white"
+        android:textSize="40sp" />
+
+    <ImageButton
+        android:id="@+id/previous_puzzle_button"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="75dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/arrow_backward"/>
+
+    <ImageButton
+        android:id="@+id/next_puzzle_button"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="50dp"
+        android:layout_toEndOf="@id/puzzle"
+        android:scaleType="fitCenter"
+        android:src="@drawable/arrow_forward"/>
+
+    <ImageButton
+        android:id="@+id/pause_button"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="20dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/pause_image"/>
+
+    <ImageButton
+        android:id="@+id/cancel_button"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/cancel_image"/>
+
+    <ImageButton
+        android:id="@+id/reset_button"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/reset_image"/>
+</RelativeLayout>
