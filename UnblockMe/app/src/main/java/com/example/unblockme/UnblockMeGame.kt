@@ -1,5 +1,7 @@
 package com.example.unblockme
 
+import android.util.Log
+
 data class Move(val block: UnblockMeBlock, val amount: Int)
 
 data class Puzzle(val width: Int, val height: Int, val blocks: List<UnblockMeBlock>, val highScore: Int, val bestScore: Int)
@@ -31,13 +33,18 @@ class UnblockMeGame {
 
     fun getNumberOfMoves(): Int { return getCurrentPuzzle().moves.size }
 
-    fun moveBlock(block: UnblockMeBlock, amount: Int)
+    fun moveBlockNoRegister(block: UnblockMeBlock, amount: Int)
     {
         when (block.direction)
         {
             Direction.Vertical      -> block.y += amount
             Direction.Horizontal    -> block.x += amount
         }
+    }
+
+    fun moveBlock(block: UnblockMeBlock, amount: Int)
+    {
+        moveBlockNoRegister(block, amount)
 
         getCurrentPuzzle().moves.addLast(Move(block, amount))
     }
@@ -63,13 +70,15 @@ class UnblockMeGame {
     }
     fun undo()
     {
+        if (getCurrentPuzzle().moves.isEmpty()) return
+
         val move: Move = getCurrentPuzzle().moves.removeLast()
 
         for (block in getCurrentPuzzle().blocks)
         {
             if (block != move.block) continue
 
-            moveBlock(block, -move.amount)
+            moveBlockNoRegister(block, -move.amount)
             break
         }
     }

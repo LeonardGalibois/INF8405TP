@@ -31,7 +31,7 @@ class  MainActivity : ComponentActivity() {
 
     private fun exit()
     {
-        finishAffinity()
+        finishAndRemoveTask()
     }
 
 }

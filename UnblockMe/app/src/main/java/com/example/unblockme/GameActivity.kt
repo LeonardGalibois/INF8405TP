@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 
 class GameActivity : AppCompatActivity() {
     private val gameViewModel: UnblockMeGameViewModel by viewModels()
+    private var board: UnblockMeGameView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +24,8 @@ class GameActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.restart_button).setOnClickListener { restart() }
         findViewById<ImageButton>(R.id.previous_button).setOnClickListener { previousPuzzle() }
         findViewById<ImageButton>(R.id.next_button).setOnClickListener { nextPuzzle() }
+
+        board = findViewById<UnblockMeGameView>(R.id.board)
     }
 
     private fun back()
@@ -33,20 +36,28 @@ class GameActivity : AppCompatActivity() {
     private fun undo()
     {
         gameViewModel.undo()
+
+        board!!.invalidate()
     }
 
     private fun restart()
     {
         gameViewModel.restart()
+
+        board!!.invalidate()
     }
 
     private fun previousPuzzle()
     {
         gameViewModel.previousPuzzle()
+
+        board!!.invalidate()
     }
 
     private fun nextPuzzle()
     {
         gameViewModel.nextPuzzle()
+
+        board!!.invalidate()
     }
 }
