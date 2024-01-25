@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageButton
 import androidx.activity.viewModels
 
 class GameActivity : AppCompatActivity() {
@@ -17,16 +18,35 @@ class GameActivity : AppCompatActivity() {
 
         Log.d("Test", "Entered game!")
 
-        gameViewModel.setBoardDimensions(6, 6)
-
-        gameViewModel.addBlock(UnblockMeBlock(1,2, 2, Direction.Horizontal))
-        gameViewModel.addBlock(UnblockMeBlock(4,1,3, Direction.Vertical))
-
         findViewById<Button>(R.id.menu_button).setOnClickListener { back() }
+        findViewById<ImageButton>(R.id.undo_button).setOnClickListener { undo() }
+        findViewById<ImageButton>(R.id.restart_button).setOnClickListener { restart() }
+        findViewById<ImageButton>(R.id.previous_button).setOnClickListener { previousPuzzle() }
+        findViewById<ImageButton>(R.id.next_button).setOnClickListener { nextPuzzle() }
     }
 
     private fun back()
     {
         finish()
+    }
+
+    private fun undo()
+    {
+        gameViewModel.undo()
+    }
+
+    private fun restart()
+    {
+        gameViewModel.restart()
+    }
+
+    private fun previousPuzzle()
+    {
+        gameViewModel.previousPuzzle()
+    }
+
+    private fun nextPuzzle()
+    {
+        gameViewModel.nextPuzzle()
     }
 }

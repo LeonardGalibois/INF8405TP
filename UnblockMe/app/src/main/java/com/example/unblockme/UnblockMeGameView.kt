@@ -291,7 +291,10 @@ class UnblockMeGameView : View {
 
         for (block in viewModel.getBlocks())
         {
-            val brush = Paint()
+            var brush: Paint = Paint()
+
+            if (block.isWinner) brush.setARGB(255, 255, 0, 0)
+            else brush.setARGB(255, 0, 0, 255)
 
             val rect = getBlockRect(block)
             
