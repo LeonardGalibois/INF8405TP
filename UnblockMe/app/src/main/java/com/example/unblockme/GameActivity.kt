@@ -17,6 +17,7 @@ class GameActivity : AppCompatActivity() {
     private var puzzleNumber: TextView? = null
     private var nextLevelButton: ImageButton? = null
     private var previousLevelButton: ImageButton? = null
+    private var movesCounter: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +35,9 @@ class GameActivity : AppCompatActivity() {
         puzzleNumber = findViewById<TextView>(R.id.puzzle_number) as TextView
         nextLevelButton = findViewById<ImageButton>(R.id.next_button)
         previousLevelButton = findViewById<ImageButton>(R.id.previous_button)
+        movesCounter = findViewById<TextView>(R.id.moves_counter) as TextView
 
+        gameViewModel.moveNumber.observe(this, { nbMoves: Int ->  movesCounter?.text = nbMoves.toString() })
         updatePuzzleSelection()
     }
 
