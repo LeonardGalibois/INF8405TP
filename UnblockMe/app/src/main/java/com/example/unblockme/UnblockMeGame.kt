@@ -58,6 +58,7 @@ class UnblockMeGame {
     fun getBoarWidth(): Int { return getCurrentPuzzle().width }
 
     fun getBoardHeight(): Int { return getCurrentPuzzle().height }
+    fun getNumberOfPuzzle(): Int {return puzzles.size }
 
     private fun getCurrentPuzzle(): Puzzle { return puzzles.get(currentPuzzleIndex) }
 

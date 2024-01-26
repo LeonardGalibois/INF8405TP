@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
@@ -14,6 +15,8 @@ class GameActivity : AppCompatActivity() {
     private val gameViewModel: UnblockMeGameViewModel by viewModels()
     private var board: UnblockMeGameView? = null
     private var puzzleNumber: TextView? = null
+    private var nextLevelButton: ImageButton? = null
+    private var previousLevelButton: ImageButton? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +32,10 @@ class GameActivity : AppCompatActivity() {
 
         board = findViewById<UnblockMeGameView>(R.id.board)
         puzzleNumber = findViewById<TextView>(R.id.puzzle_number) as TextView
+        nextLevelButton = findViewById<ImageButton>(R.id.next_button)
+        previousLevelButton = findViewById<ImageButton>(R.id.previous_button)
+
+        updatePuzzleSelection()
     }
 
     private fun back()
@@ -53,14 +60,23 @@ class GameActivity : AppCompatActivity() {
     private fun previousPuzzle()
     {
         gameViewModel.previousPuzzle()
-        puzzleNumber?.text = gameViewModel.getCurrentPuzzleNumber().toString()
+        updatePuzzleSelection()
         board!!.invalidate()
     }
 
     private fun nextPuzzle()
     {
         gameViewModel.nextPuzzle()
-        puzzleNumber?.text = gameViewModel.getCurrentPuzzleNumber().toString()
+        updatePuzzleSelection()
         board!!.invalidate()
+    }
+
+    private fun updatePuzzleSelection()
+    {
+        val currentPuzzleNumber: Int = gameViewModel.getCurrentPuzzleNumber()
+        puzzleNumber?.text = currentPuzzleNumber.toString()
+
+        previousLevelButton?.visibility = if(currentPuzzleNumber == 1) View.INVISIBLE else View.VISIBLE
+        nextLevelButton?.visibility = if(currentPuzzleNumber == gameViewModel.getNumberOfPuzzle()) View.INVISIBLE else View.VISIBLE
     }
 }

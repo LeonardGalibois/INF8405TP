@@ -39,4 +39,6 @@ class UnblockMeGameViewModel : ViewModel() {
     {
         return model.getCurrentPuzzleIndex() + 1
     }
+
+    fun getNumberOfPuzzle(): Int {return model.getNumberOfPuzzle() }
 }
