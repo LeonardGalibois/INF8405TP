@@ -24,12 +24,26 @@ class UnblockMeGame {
         ),
         Puzzle(6,6,
             listOf(
-                UnblockMeBlock(0,2, 2, Direction.Horizontal, true)
+                UnblockMeBlock(0,2, 2, Direction.Horizontal, true),
+                UnblockMeBlock(2,1,2, Direction.Vertical),
+                UnblockMeBlock(3,1,3, Direction.Vertical),
+                UnblockMeBlock(4,1,3, Direction.Vertical),
+                UnblockMeBlock(0,3,2, Direction.Horizontal),
+                UnblockMeBlock(2,3,2, Direction.Vertical),
+                UnblockMeBlock(1,4,2, Direction.Vertical),
+                UnblockMeBlock(2,5,2, Direction.Horizontal)
             ), 0, 17
         ),
         Puzzle(6,6,
             listOf(
-                UnblockMeBlock(0,2, 2, Direction.Horizontal, true)
+                UnblockMeBlock(0,2, 2, Direction.Horizontal, true),
+                UnblockMeBlock(0,0,2, Direction.Vertical),
+                UnblockMeBlock(1,0,2, Direction.Horizontal),
+                UnblockMeBlock(3,0,2, Direction.Horizontal),
+                UnblockMeBlock(2,1,2, Direction.Vertical),
+                UnblockMeBlock(3,2,3, Direction.Vertical),
+                UnblockMeBlock(4,2,3, Direction.Vertical),
+                UnblockMeBlock(0,4,3, Direction.Horizontal)
             ), 0, 15
         )
     )
