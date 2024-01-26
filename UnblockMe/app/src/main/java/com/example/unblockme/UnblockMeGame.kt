@@ -85,7 +85,7 @@ class UnblockMeGame {
 
     fun nextPuzzle()
     {
-        if (currentPuzzleIndex < puzzles.size)
+        if (currentPuzzleIndex < puzzles.size - 1)
         {
             currentPuzzleIndex++
         }
