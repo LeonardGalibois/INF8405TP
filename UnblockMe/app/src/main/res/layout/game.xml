@@ -160,6 +160,14 @@
             app:tint="@color/white"
             android:text="Menu"/>
 
+        <Button
+
+            android:id="@+id/success_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:tint="@color/white"
+            android:text="Success"/>
+
         <Space
             android:layout_width="match_parent"
             android:layout_height="match_parent"

@@ -1,9 +1,13 @@
 package com.example.unblockme
 
+import android.app.Dialog
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -26,6 +30,7 @@ class GameActivity : AppCompatActivity() {
         Log.d("Test", "Entered game!")
 
         findViewById<Button>(R.id.menu_button).setOnClickListener { back() }
+        findViewById<Button>(R.id.success_button).setOnClickListener { openSuccessWindow() }
         findViewById<ImageButton>(R.id.undo_button).setOnClickListener { undo() }
         findViewById<ImageButton>(R.id.restart_button).setOnClickListener { restart() }
         findViewById<ImageButton>(R.id.previous_button).setOnClickListener { previousPuzzle() }
@@ -81,5 +86,20 @@ class GameActivity : AppCompatActivity() {
 
         previousLevelButton?.visibility = if(currentPuzzleNumber == 1) View.INVISIBLE else View.VISIBLE
         nextLevelButton?.visibility = if(currentPuzzleNumber == gameViewModel.getNumberOfPuzzle()) View.INVISIBLE else View.VISIBLE
+    }
+
+    private fun openSuccessWindow()
+    {
+        val successWindow = Dialog(this)
+        successWindow.setContentView(R.layout.success_window)
+        successWindow.show()
+
+        val successSound: MediaPlayer = MediaPlayer.create(this, R.raw.success_sound)
+        successSound.start()
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            successWindow.dismiss()
+            nextPuzzle()
+        },3000)
     }
 }
