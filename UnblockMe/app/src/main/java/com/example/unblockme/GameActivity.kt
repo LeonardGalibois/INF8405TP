@@ -1,8 +1,6 @@
 package com.example.unblockme
 
 import android.app.Dialog
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -42,29 +40,33 @@ class GameActivity : AppCompatActivity() {
         previousLevelButton = findViewById<ImageButton>(R.id.previous_button)
         movesCounter = findViewById<TextView>(R.id.moves_counter) as TextView
 
-        gameViewModel.moveNumber.observe(this, { nbMoves: Int ->  movesCounter?.text = nbMoves.toString() })
+        gameViewModel.moveNumber.observe(this) { nbMoves: Int ->
+            movesCounter?.text = nbMoves.toString()
+        }
         updatePuzzleSelection()
     }
 
+    // Go back to main menu
     private fun back()
     {
         finish()
     }
 
+    // Cancel latest move
     private fun undo()
     {
         gameViewModel.undo()
-
         board!!.invalidate()
     }
 
+    // Reset puzzle
     private fun restart()
     {
         gameViewModel.restart()
-
         board!!.invalidate()
     }
 
+    // Go to previous puzzle
     private fun previousPuzzle()
     {
         gameViewModel.previousPuzzle()
@@ -72,6 +74,7 @@ class GameActivity : AppCompatActivity() {
         board!!.invalidate()
     }
 
+    // Go to next puzzle
     private fun nextPuzzle()
     {
         gameViewModel.nextPuzzle()
@@ -79,6 +82,7 @@ class GameActivity : AppCompatActivity() {
         board!!.invalidate()
     }
 
+    // Updates puzzle number and arrow visibility
     private fun updatePuzzleSelection()
     {
         val currentPuzzleNumber: Int = gameViewModel.getCurrentPuzzleNumber()
@@ -88,6 +92,7 @@ class GameActivity : AppCompatActivity() {
         nextLevelButton?.visibility = if(currentPuzzleNumber == gameViewModel.getNumberOfPuzzle()) View.INVISIBLE else View.VISIBLE
     }
 
+    // Show success window when completing a puzzle
     private fun openSuccessWindow()
     {
         val successWindow = Dialog(this)

@@ -8,19 +8,13 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import androidx.core.view.marginLeft
-import androidx.core.view.marginTop
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.findViewTreeViewModelStoreOwner
-import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
  * TODO: document your custom view class.
  */
-
-const val DEFAULT_BOARD_WIDTH: Int = 6
-const val DEFAULT_BOARD_HEIGHT: Int = 6
 
 data class BlockDrag(val block: UnblockMeBlock, val startX: Float, val startY: Float)
 {

@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
-            android:textSize="50dp"
+            android:textSize="50sp"
             android:textAlignment="center"
             android:text="About"
             />
@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textAlignment="center"
             android:text="@string/about"
             />
