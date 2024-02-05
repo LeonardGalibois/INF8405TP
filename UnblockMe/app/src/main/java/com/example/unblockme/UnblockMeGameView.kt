@@ -2,6 +2,7 @@ package com.example.unblockme
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
@@ -285,14 +286,24 @@ class UnblockMeGameView : View {
 
         for (block in viewModel.getBlocks())
         {
-            var brush: Paint = Paint()
+            val fill = Paint()
+            val stroke = Paint()
 
-            if (block.isWinner) brush.setARGB(255, 255, 0, 0)
-            else brush.setARGB(255, 0, 0, 255)
+            if (block.isWinner) {
+                fill.color = Color.RED
+            }
+            else {
+                fill.color = Color.BLUE
+            }
+            fill.style = Paint.Style.FILL
+            stroke.color = Color.BLACK
+            stroke.style = Paint.Style.STROKE
+            stroke.strokeWidth = 7f
 
             val rect = getBlockRect(block)
             
-            canvas.apply { drawRect(rect, brush)  }
+            canvas.apply { drawRect(rect, fill)  }
+            canvas.apply { drawRect(rect, stroke)  }
         }
     }
 }

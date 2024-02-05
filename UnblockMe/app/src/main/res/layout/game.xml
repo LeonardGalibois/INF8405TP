@@ -125,7 +125,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_span="3"
-                    android:text="High Score: --/17"
+                    android:text="Record: --/17"
                     android:textSize="15sp"/>
 
             </TableRow>
