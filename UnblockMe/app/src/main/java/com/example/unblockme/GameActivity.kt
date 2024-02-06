@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.lifecycle.Observer
 
 class GameActivity : AppCompatActivity() {
     private val gameViewModel: UnblockMeGameViewModel by viewModels()
@@ -26,8 +27,10 @@ class GameActivity : AppCompatActivity() {
         Log.d("Test", "Entered game!")
 
         findViewById<Button>(R.id.menu_button).setOnClickListener { back() }
-        findViewById<ImageButton>(R.id.undo_button).setOnClickListener { undo() }
-        findViewById<ImageButton>(R.id.restart_button).setOnClickListener { restart() }
+        val undoBtn: ImageButton = findViewById<ImageButton>(R.id.undo_button)
+        val restartBtn: ImageButton = findViewById<ImageButton>(R.id.restart_button)
+        restartBtn.setOnClickListener{restart()}
+        undoBtn.setOnClickListener{undo()}
         findViewById<ImageButton>(R.id.previous_button).setOnClickListener { previousPuzzle() }
         findViewById<ImageButton>(R.id.next_button).setOnClickListener { nextPuzzle() }
 
@@ -37,9 +40,26 @@ class GameActivity : AppCompatActivity() {
         previousLevelButton = findViewById<ImageButton>(R.id.previous_button)
         movesCounter = findViewById<TextView>(R.id.moves_counter) as TextView
 
-        gameViewModel.moveNumber.observe(this, { nbMoves: Int ->  movesCounter?.text = nbMoves.toString() })
+        gameViewModel.moveNumber.observe(this) { nbMoves: Int ->
+            movesCounter?.text = nbMoves.toString()
+            updateRestartBtn(restartBtn, nbMoves)
+            updateUndoBtn(undoBtn,nbMoves)
+        }
         updatePuzzleSelection()
     }
+
+    private fun updateRestartBtn(restartBtn: ImageButton,nbMoves:Int) {
+        val moveCondition = nbMoves > 0
+        restartBtn.isEnabled = moveCondition
+        restartBtn.alpha = if(moveCondition) 1.0f else 0.5f
+    }
+
+    private fun updateUndoBtn(undoBtn: ImageButton,nbMoves:Int) {
+        val moveCondition = nbMoves > 0
+        undoBtn.isEnabled = moveCondition
+        undoBtn.alpha = if(moveCondition) 1.0f else 0.5f
+    }
+
 
     private fun back()
     {
@@ -49,15 +69,14 @@ class GameActivity : AppCompatActivity() {
     private fun undo()
     {
         gameViewModel.undo()
-
         board!!.invalidate()
     }
 
     private fun restart()
     {
-        gameViewModel.restart()
+            gameViewModel.restart()
+            board!!.invalidate()
 
-        board!!.invalidate()
     }
 
     private fun previousPuzzle()
@@ -72,6 +91,10 @@ class GameActivity : AppCompatActivity() {
         gameViewModel.nextPuzzle()
         updatePuzzleSelection()
         board!!.invalidate()
+
+
+
+
     }
 
     private fun updatePuzzleSelection()
