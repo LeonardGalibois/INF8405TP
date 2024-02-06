@@ -41,7 +41,7 @@ class UnblockMeGameViewModel : ViewModel() {
     fun previousPuzzle()
     {
         model.previousPuzzle()
-        moveNumber.value = model.getNumberOfMoves()
+        restart()
         // TODO
     }
 
@@ -49,7 +49,7 @@ class UnblockMeGameViewModel : ViewModel() {
     fun nextPuzzle()
     {
         model.nextPuzzle()
-        moveNumber.value = model.getNumberOfMoves()
+        restart()
         // TODO
     }
 

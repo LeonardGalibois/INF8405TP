@@ -23,6 +23,8 @@ data class BlockDrag(val block: UnblockMeBlock, val startX: Float, val startY: F
 }
 
 class UnblockMeGameView : View {
+    private val fill = Paint()
+    private val stroke = Paint()
 
     private var _ongoingDrag: BlockDrag? = null
 
@@ -78,8 +80,8 @@ class UnblockMeGameView : View {
             }
         }
 
-        var left: Float = x * cellSize
-        var top: Float = y * cellSize
+        val left: Float = x * cellSize
+        val top: Float = y * cellSize
         var right: Float = (x + 1) * cellSize
         var bottom: Float = (y + 1) * cellSize
 
@@ -116,7 +118,7 @@ class UnblockMeGameView : View {
         Log.d("UnblockMeGameView","Started dragging block that was at (${block.x}, ${block.y})")
     }
 
-    private fun onBlockDragEnded(x: Float, y: Float)
+    private fun onBlockDragEnded()
     {
         if (_ongoingDrag == null) return
 
@@ -147,12 +149,10 @@ class UnblockMeGameView : View {
         if (block.direction == Direction.Vertical)
         {
             // Block moves up and down
-
             move = ((y - _ongoingDrag!!.startY) / cellSize).roundToInt()
         }
         else {
             // Block moves left and right
-
             move = ((x - _ongoingDrag!!.startX) / cellSize).roundToInt()
         }
 
@@ -269,7 +269,7 @@ class UnblockMeGameView : View {
                 return true
             }
             else if (event.action == MotionEvent.ACTION_UP) {
-                onBlockDragEnded(x, y)
+                onBlockDragEnded()
                 return true
             }
             else {
@@ -286,9 +286,6 @@ class UnblockMeGameView : View {
 
         for (block in viewModel.getBlocks())
         {
-            val fill = Paint()
-            val stroke = Paint()
-
             if (block.isWinner) {
                 fill.color = Color.RED
             }
