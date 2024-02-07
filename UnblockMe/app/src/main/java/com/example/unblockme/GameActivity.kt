@@ -1,5 +1,6 @@
 package com.example.unblockme
 
+import DataStoreManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
@@ -11,8 +12,11 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
+import kotlinx.coroutines.runBlocking
 
 class GameActivity : AppCompatActivity() {
+    private lateinit var dataStoreManager: DataStoreManager
+    private lateinit var highScoreDisplay: TextView
     private val gameViewModel: UnblockMeGameViewModel by viewModels()
     private var board: UnblockMeGameView? = null
     private var puzzleNumber: TextView? = null
@@ -25,6 +29,13 @@ class GameActivity : AppCompatActivity() {
         setContentView(R.layout.game)
 
         Log.d("Test", "Entered game!")
+        dataStoreManager = DataStoreManager(this)
+        highScoreDisplay = findViewById(R.id.high_score_display)
+        val highscore = runBlocking { dataStoreManager.getHighscore(gameViewModel.getCurrentPuzzleNumber()) }
+        val nbMinimalObserver = Observer<Int>{nbMinimal ->
+            highScoreDisplay.text = "Record : $highscore/$nbMinimal"
+        }
+        gameViewModel.nbrMinimal.observe(this,nbMinimalObserver);
 
         findViewById<Button>(R.id.menu_button).setOnClickListener { back() }
         val undoBtn: ImageButton = findViewById<ImageButton>(R.id.undo_button)
@@ -91,10 +102,6 @@ class GameActivity : AppCompatActivity() {
         gameViewModel.nextPuzzle()
         updatePuzzleSelection()
         board!!.invalidate()
-
-
-
-
     }
 
     private fun updatePuzzleSelection()

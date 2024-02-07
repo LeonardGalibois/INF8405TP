@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 
 class UnblockMeGameViewModel : ViewModel() {
     private var model: UnblockMeGame = UnblockMeGame()
+    var nbrMinimal : MutableLiveData<Int> = MutableLiveData(getNbMinimalForPuzzle(getCurrentPuzzleNumber()))
     var moveNumber: MutableLiveData<Int> = MutableLiveData<Int>(0)
 
     fun getWidth(): Int { return model.getBoarWidth() }
@@ -37,6 +38,7 @@ class UnblockMeGameViewModel : ViewModel() {
     {
         model.previousPuzzle()
         moveNumber.value = model.getNumberOfMoves()
+        nbrMinimal.value = getNbMinimalForPuzzle(getCurrentPuzzleNumber())
         // TODO
     }
 
@@ -44,6 +46,7 @@ class UnblockMeGameViewModel : ViewModel() {
     {
         model.nextPuzzle()
         moveNumber.value = model.getNumberOfMoves()
+        nbrMinimal.value = getNbMinimalForPuzzle(getCurrentPuzzleNumber())
         // TODO
     }
 
@@ -53,4 +56,13 @@ class UnblockMeGameViewModel : ViewModel() {
     }
 
     fun getNumberOfPuzzle(): Int { return model.getNumberOfPuzzle() }
+
+    private fun getNbMinimalForPuzzle(puzzleNumber: Int): Int {
+        return when (puzzleNumber) {
+            1 -> 15
+            2 -> 17
+            3 -> 15
+            else -> 0
+        }
+    }
 }
