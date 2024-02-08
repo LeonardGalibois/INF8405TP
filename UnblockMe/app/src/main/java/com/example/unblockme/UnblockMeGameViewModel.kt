@@ -43,7 +43,6 @@ class UnblockMeGameViewModel : ViewModel() {
     {
         model.previousPuzzle()
         restart()
-        // TODO
     }
 
     // Increase puzzle index and reset moves counter
@@ -51,7 +50,6 @@ class UnblockMeGameViewModel : ViewModel() {
     {
         model.nextPuzzle()
         restart()
-        // TODO
     }
 
     // Return current puzzle index
@@ -63,5 +61,6 @@ class UnblockMeGameViewModel : ViewModel() {
     // Return number of puzzles
     fun getNumberOfPuzzle(): Int { return model.getNumberOfPuzzle() }
 
+    // Triggers function to open success window when completing a puzzle
     fun triggerSuccessWindow() { successWindow.value = Unit }
 }

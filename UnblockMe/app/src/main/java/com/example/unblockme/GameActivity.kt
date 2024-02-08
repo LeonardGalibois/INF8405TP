@@ -99,13 +99,16 @@ class GameActivity : AppCompatActivity() {
     // Show success window when completing a puzzle
     private fun openSuccessWindow()
     {
+        // Open success window
         val successWindow = Dialog(this)
         successWindow.setContentView(R.layout.success_window)
         successWindow.show()
 
+        // Play sound
         val successSound: MediaPlayer = MediaPlayer.create(this, R.raw.success_sound)
         successSound.start()
 
+        // Close window after 3 seconds
         Handler(Looper.getMainLooper()).postDelayed({
             successWindow.dismiss()
             nextPuzzle()
