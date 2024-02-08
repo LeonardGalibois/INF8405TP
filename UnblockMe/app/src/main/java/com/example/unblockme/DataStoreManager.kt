@@ -22,9 +22,10 @@ class DataStoreManager(context: Context) {
 
     // Set new high score if new score is better
     suspend fun setHighscore(puzzleNumber: Int, newScore: Int) {
-        if (newScore >= getHighscore(puzzleNumber)) return
-        dataStore.edit { highscores ->
-            highscores[getPreferencesKey(puzzleNumber)] = newScore
+        if (newScore < getHighscore(puzzleNumber)) {
+            dataStore.edit { highscores ->
+                highscores[getPreferencesKey(puzzleNumber)] = newScore
+            }
         }
     }
 
