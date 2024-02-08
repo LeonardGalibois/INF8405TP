@@ -20,6 +20,7 @@ class DataStoreManager(context: Context) {
         return intPreferencesKey("${puzzlePrefix}${puzzleNumber}")
     }
 
+    // Set new high score if new score is better
     suspend fun setHighscore(puzzleNumber: Int, newScore: Int) {
         if (newScore >= getHighscore(puzzleNumber)) return
         dataStore.edit { highscores ->
@@ -27,6 +28,7 @@ class DataStoreManager(context: Context) {
         }
     }
 
+    // Return high score for each puzzle
     suspend fun getHighscore(puzzleNumber: Int): Int {
         val preferencesKey = getPreferencesKey(puzzleNumber)
         val highscore : Flow<Int> = dataStore.data.map { highscores ->

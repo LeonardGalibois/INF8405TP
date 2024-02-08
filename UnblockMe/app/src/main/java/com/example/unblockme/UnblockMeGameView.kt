@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
@@ -114,8 +113,6 @@ class UnblockMeGameView : View {
     private fun onBlockDragBegin(block: UnblockMeBlock, x: Float, y: Float)
     {
         _ongoingDrag = BlockDrag(block, x, y)
-
-        Log.d("UnblockMeGameView","Started dragging block that was at (${block.x}, ${block.y})")
     }
 
     // Stop dragging the block
@@ -126,11 +123,8 @@ class UnblockMeGameView : View {
         val block: UnblockMeBlock = _ongoingDrag!!.block
         val move: Int = _ongoingDrag!!.move
 
-        Log.d("UnblockMeGameView", "Stopped dragging block that was at (${block.x}, ${block.y})")
-
         if (move != 0)
         {
-            Log.d("UnblockMeGameView", "Moved block by $move units")
             viewModel.moveBlock(block, move)
             if (block.isWinner && block.x == 4)
             {
@@ -171,6 +165,7 @@ class UnblockMeGameView : View {
         }
     }
 
+    // Check collisions between blocks
     private fun CheckBlockCollisions(block: UnblockMeBlock, move: Int): Int
     {
         var displacement: Int = move

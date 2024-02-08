@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -30,8 +29,6 @@ class GameActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.game)
         dataStoreManager = DataStoreManager(this)
-
-        Log.d("Test", "Entered game!")
 
         highScoreDisplay = findViewById(R.id.high_score_display)
 
