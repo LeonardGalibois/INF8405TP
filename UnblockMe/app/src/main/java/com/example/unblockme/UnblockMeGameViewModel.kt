@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 
 class UnblockMeGameViewModel : ViewModel() {
     private var model: UnblockMeGame = UnblockMeGame()
+    val successWindow = MutableLiveData<Unit>()
     var moveNumber: MutableLiveData<Int> = MutableLiveData<Int>(0)
 
     // Return board width
@@ -61,4 +62,6 @@ class UnblockMeGameViewModel : ViewModel() {
 
     // Return number of puzzles
     fun getNumberOfPuzzle(): Int { return model.getNumberOfPuzzle() }
+
+    fun triggerSuccessWindow() { successWindow.value = Unit }
 }

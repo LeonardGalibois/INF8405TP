@@ -131,6 +131,10 @@ class UnblockMeGameView : View {
         {
             Log.d("UnblockMeGameView", "Moved block by $move units")
             viewModel.moveBlock(block, move)
+            if (block.isWinner && block.x == 4)
+            {
+                viewModel.triggerSuccessWindow()
+            }
             invalidate()
         }
         _ongoingDrag = null
@@ -218,7 +222,6 @@ class UnblockMeGameView : View {
         if (block.direction == Direction.Vertical)
         {
             // Block moves up and down
-
             var minY: Int = 0
             var maxY: Int = viewModel.getHeight() - block.size
 
@@ -226,8 +229,8 @@ class UnblockMeGameView : View {
             {
                 if (block == other || block.x < other.x || block.x >= other.x + other.size) continue
 
-                if (other.y < block.y && other.y >= minY) minY = other.y + 1
-                if (other.y > block.y && other.y <= maxY) maxY = other.y - block.size
+//                if (other.y < block.y && other.y >= minY) minY = other.y + 1
+//                if (other.y > block.y && other.y <= maxY) maxY = other.y - block.size
             }
 
             if (finalMove > maxY - block.y) finalMove = maxY - block.y
@@ -236,7 +239,6 @@ class UnblockMeGameView : View {
         else
         {
             // Block moves left and right
-
             var minX: Int = 0
             var maxX: Int = viewModel.getWidth() - block.size
 
@@ -244,8 +246,8 @@ class UnblockMeGameView : View {
             {
                 if (block == other || block.y < other.y || block.y >= other.y + other.size) continue
 
-                if (other.x < block.x && other.x >= minX) minX = other.x + 1
-                if (other.x > block.x && other.x <= maxX) maxX = other.x - block.size
+//                if (other.x < block.x && other.x >= minX) minX = other.x + 1
+//                if (other.x > block.x && other.x <= maxX) maxX = other.x - block.size
             }
 
             if (finalMove > maxX - block.x) finalMove = maxX - block.x
