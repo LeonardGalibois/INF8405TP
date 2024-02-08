@@ -70,7 +70,6 @@ class GameActivity : AppCompatActivity() {
         }
 
         gameViewModel.successWindow.observe(this) {
-            Log.d("Test", gameViewModel.getCurrentPuzzleNumber().toString())
             gameViewModel.moveNumber.value?.let { score ->
                 runBlocking {
                     dataStoreManager.setHighscore(gameViewModel.getCurrentPuzzleNumber(),
