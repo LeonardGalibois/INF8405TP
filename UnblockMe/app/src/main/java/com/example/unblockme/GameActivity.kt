@@ -75,6 +75,7 @@ class GameActivity : AppCompatActivity() {
 
     }
 
+    // Disable undo and restart buttons if no moves
     private fun updateBtn(imgBtn: ImageButton,nbMoves:Int) {
         val moveCondition = nbMoves > 0
         imgBtn.isEnabled = moveCondition

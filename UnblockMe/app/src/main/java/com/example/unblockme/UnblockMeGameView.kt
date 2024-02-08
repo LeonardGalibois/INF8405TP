@@ -165,126 +165,146 @@ class UnblockMeGameView : View {
         }
     }
 
-    // Check collisions between blocks
+    // Check vertical and horizontal collisions between blocks
     private fun CheckBlockCollisions(block: UnblockMeBlock, move: Int): Int
     {
-        var displacement: Int = move
+        val displacement: Int
 
         if (block.direction == Direction.Vertical)
         {
-            // Block moves up and down
-
-            displacement = min(displacement, viewModel.getHeight() - block.size - block.y)
-            displacement = max(displacement, - block.y)
-
-            for (other in viewModel.getBlocks())
-            {
-                if (other == block) continue
-
-                if (other.direction == Direction.Vertical)
-                {
-                    // Both blocks move in the same direction
-
-                    if (other.x != block.x) continue
-
-                    if (block.y < other.y)
-                    {
-                        // Block is above other
-
-                        if (displacement < 0) continue
-
-                        displacement = min(displacement, other.y - block.y - block.size)
-                    }
-                    else
-                    {
-                        // Block is below other
-
-                        if (displacement > 0) continue
-
-                        displacement = max(displacement, other.y - block.y + other.size)
-                    }
-                }
-                else
-                {
-                    // Blocks move in different directions
-
-                    if (block.x < other.x || block.x >= other.x + other.size) continue
-
-                    if (block.y < other.y)
-                    {
-                        // Block is above other
-
-                        if (displacement < 0) continue
-
-                        displacement = min(displacement, other.y - block.y - block.size)
-                    }
-                    else
-                    {
-                        // Block is below other
-
-                        if (displacement > 0) continue
-
-                        displacement = max(displacement, other.y - block.y + 1)
-                    }
-                }
-            }
+            displacement = CheckVerticalCollisions(block, move)
         }
         else
         {
-            // Block moves left and right
+            displacement = CheckHorizontalCollisions(block, move)
+        }
 
-            displacement = min(displacement, viewModel.getWidth() - block.size - block.x)
-            displacement = max(displacement, - block.x)
+        return displacement
+    }
 
-            for (other in viewModel.getBlocks())
+    // Check vertical collisions between blocks
+    private fun CheckVerticalCollisions(block: UnblockMeBlock, move: Int): Int
+    {
+        var displacement: Int = move
+
+        // Block moves up and down
+
+        displacement = min(displacement, viewModel.getHeight() - block.size - block.y)
+        displacement = max(displacement, - block.y)
+
+        for (other in viewModel.getBlocks())
+        {
+            if (other == block) continue
+
+            if (other.direction == Direction.Vertical)
             {
-                if (other == block) continue
+                // Both blocks move in the same direction
 
-                if (other.direction == Direction.Vertical)
+                if (other.x != block.x) continue
+
+                if (block.y < other.y)
                 {
-                    // Blocks move in different directions
+                    // Block is above other
 
-                    if (block.y < other.y || block.y >= other.y + other.size) continue
+                    if (displacement < 0) continue
 
-                    if (block.x < other.x)
-                    {
-                        // Block is to the left of other
-
-                        if (displacement < 0) continue
-
-                        displacement = min(displacement, other.x - block.x - block.size)
-                    }
-                    else
-                    {
-                        // Block is to the right of other
-
-                        if (displacement > 0) continue
-
-                        displacement = max(displacement, other.x - block.x + 1)
-                    }
+                    displacement = min(displacement, other.y - block.y - block.size)
                 }
                 else
                 {
-                    // Blocks both move in the same direction
+                    // Block is below other
 
-                    if (other.y != block.y) continue
+                    if (displacement > 0) continue
 
-                    if (block.x < other.x)
-                    {
-                        // Block is to the left of other
+                    displacement = max(displacement, other.y - block.y + other.size)
+                }
+            }
+            else
+            {
+                // Blocks move in different directions
 
-                        if (displacement < 0) continue
+                if (block.x < other.x || block.x >= other.x + other.size) continue
 
-                        displacement = min(displacement, other.x - block.x - block.size)
-                    }
-                    else
-                    {
-                        // Block is to the right of other
+                if (block.y < other.y)
+                {
+                    // Block is above other
 
-                        if (displacement > 0) continue
+                    if (displacement < 0) continue
 
-                        displacement = max(displacement, other.x - block.x + other.size)
-                    }
+                    displacement = min(displacement, other.y - block.y - block.size)
+                }
+                else
+                {
+                    // Block is below other
+
+                    if (displacement > 0) continue
+
+                    displacement = max(displacement, other.y - block.y + 1)
+                }
+            }
+        }
+
+        return displacement
+    }
+
+    // Check horizontal collisions between blocks
+    private fun CheckHorizontalCollisions(block: UnblockMeBlock, move: Int): Int
+    {
+        var displacement: Int = move
+
+        // Block moves left and right
+
+        displacement = min(displacement, viewModel.getWidth() - block.size - block.x)
+        displacement = max(displacement, - block.x)
+
+        for (other in viewModel.getBlocks())
+        {
+            if (other == block) continue
+
+            if (other.direction == Direction.Vertical)
+            {
+                // Blocks move in different directions
+
+                if (block.y < other.y || block.y >= other.y + other.size) continue
+
+                if (block.x < other.x)
+                {
+                    // Block is to the left of other
+
+                    if (displacement < 0) continue
+
+                    displacement = min(displacement, other.x - block.x - block.size)
+                }
+                else
+                {
+                    // Block is to the right of other
+
+                    if (displacement > 0) continue
+
+                    displacement = max(displacement, other.x - block.x + 1)
+                }
+            }
+            else
+            {
+                // Blocks both move in the same direction
+
+                if (other.y != block.y) continue
+
+                if (block.x < other.x)
+                {
+                    // Block is to the left of other
+
+                    if (displacement < 0) continue
+
+                    displacement = min(displacement, other.x - block.x - block.size)
+                }
+                else
+                {
+                    // Block is to the right of other
+
+                    if (displacement > 0) continue
+
+                    displacement = max(displacement, other.x - block.x + other.size)
                 }
             }
         }
