@@ -1,5 +1,7 @@
 package com.example.unblockme
 
+import androidx.compose.ui.geometry.Rect
+
 enum class Direction {
     Vertical,
     Horizontal
