@@ -2,25 +2,18 @@ package com.example.unblockme
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import androidx.core.view.marginLeft
-import androidx.core.view.marginTop
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.findViewTreeViewModelStoreOwner
-import kotlin.math.abs
+import kotlin.math.min
+import kotlin.math.max
 import kotlin.math.roundToInt
-
-/**
- * TODO: document your custom view class.
- */
-
-const val DEFAULT_BOARD_WIDTH: Int = 6
-const val DEFAULT_BOARD_HEIGHT: Int = 6
 
 data class BlockDrag(val block: UnblockMeBlock, val startX: Float, val startY: Float)
 {
@@ -28,6 +21,8 @@ data class BlockDrag(val block: UnblockMeBlock, val startX: Float, val startY: F
 }
 
 class UnblockMeGameView : View {
+    private val fill = Paint()
+    private val stroke = Paint()
 
     private var _ongoingDrag: BlockDrag? = null
 
@@ -60,6 +55,7 @@ class UnblockMeGameView : View {
         a.recycle()
     }
 
+    // Get block position on the board
     private fun getBlockRect(block: UnblockMeBlock): Rect
     {
         val cellSize: Float = width.toFloat() / viewModel.getWidth().toFloat()
@@ -83,8 +79,8 @@ class UnblockMeGameView : View {
             }
         }
 
-        var left: Float = x * cellSize
-        var top: Float = y * cellSize
+        val left: Float = x * cellSize
+        val top: Float = y * cellSize
         var right: Float = (x + 1) * cellSize
         var bottom: Float = (y + 1) * cellSize
 
@@ -114,6 +110,7 @@ class UnblockMeGameView : View {
         return null
     }
 
+    // Start dragging the block
     private fun onBlockDragBegin(block: UnblockMeBlock, x: Float, y: Float)
     {
         _ongoingDrag = BlockDrag(block, x, y)
@@ -121,7 +118,8 @@ class UnblockMeGameView : View {
         Log.d("UnblockMeGameView","Started dragging block that was at (${block.x}, ${block.y})")
     }
 
-    private fun onBlockDragEnded(x: Float, y: Float)
+    // Stop dragging the block
+    private fun onBlockDragEnded()
     {
         if (_ongoingDrag == null) return
 
@@ -134,12 +132,17 @@ class UnblockMeGameView : View {
         {
             Log.d("UnblockMeGameView", "Moved block by $move units")
             viewModel.moveBlock(block, move)
+            if (block.isWinner && block.x == 4)
+            {
+                viewModel.triggerSuccessWindow()
+            }
             invalidate()
         }
         _ongoingDrag = null
 
     }
 
+    // Handle block movement
     private fun onBlockDragged(x: Float, y: Float)
     {
         if (_ongoingDrag == null) return
@@ -152,12 +155,10 @@ class UnblockMeGameView : View {
         if (block.direction == Direction.Vertical)
         {
             // Block moves up and down
-
             move = ((y - _ongoingDrag!!.startY) / cellSize).roundToInt()
         }
         else {
             // Block moves left and right
-
             move = ((x - _ongoingDrag!!.startX) / cellSize).roundToInt()
         }
 
@@ -170,102 +171,140 @@ class UnblockMeGameView : View {
         }
     }
 
-    private fun CheckBlockMutualCollisions(self: UnblockMeBlock, move: Int): Int
-    {
-        var finalMove: Int = move
-
-        var grid: MutableList<MutableList<Int>> = mutableListOf()
-
-        for (y in 0..viewModel.getHeight())
-        {
-            grid[y] = mutableListOf()
-
-            for (x in 0..viewModel.getWidth()) grid[y][x] = 0
-        }
-
-        return finalMove
-    }
-
-    private fun CheckBlockBoundsCollisions(block: UnblockMeBlock, move: Int): Int
-    {
-        var finalMove: Int = move
-
-        if (block.direction == Direction.Vertical)
-        {
-            // Block moves up and down, so we must check upper and lower bounds
-
-            var newY: Int = block.y + move
-
-            if (newY < 0) newY = 0
-            else if (newY > viewModel.getHeight() - block.size) newY = viewModel.getHeight() - block.size
-
-            finalMove = newY - block.y
-        }
-        else
-        {
-            // Block moves left and right, so we must check side bounds
-
-            var newX: Int = block.x + move
-
-            if (newX < 0) newX = 0
-            else if (newX > viewModel.getWidth() - block.size) newX = viewModel.getHeight() - block.size
-
-            finalMove = newX - block.x
-        }
-
-        return finalMove
-    }
-
     private fun CheckBlockCollisions(block: UnblockMeBlock, move: Int): Int
     {
-        var finalMove: Int = move
+        var displacement: Int = move
 
         if (block.direction == Direction.Vertical)
         {
             // Block moves up and down
 
-            var minY: Int = 0
-            var maxY: Int = viewModel.getHeight() - block.size
+            displacement = min(displacement, viewModel.getHeight() - block.size - block.y)
+            displacement = max(displacement, - block.y)
 
             for (other in viewModel.getBlocks())
             {
-                if (block == other || block.x < other.x || block.x >= other.x + other.size) continue
+                if (other == block) continue
 
-                if (other.y < block.y && other.y >= minY) minY = other.y + 1
-                if (other.y > block.y && other.y <= maxY) maxY = other.y - block.size
+                if (other.direction == Direction.Vertical)
+                {
+                    // Both blocks move in the same direction
+
+                    if (other.x != block.x) continue
+
+                    if (block.y < other.y)
+                    {
+                        // Block is above other
+
+                        if (displacement < 0) continue
+
+                        displacement = min(displacement, other.y - block.y - block.size)
+                    }
+                    else
+                    {
+                        // Block is below other
+
+                        if (displacement > 0) continue
+
+                        displacement = max(displacement, other.y - block.y + other.size)
+                    }
+                }
+                else
+                {
+                    // Blocks move in different directions
+
+                    if (block.x < other.x || block.x >= other.x + other.size) continue
+
+                    if (block.y < other.y)
+                    {
+                        // Block is above other
+
+                        if (displacement < 0) continue
+
+                        displacement = min(displacement, other.y - block.y - block.size)
+                    }
+                    else
+                    {
+                        // Block is below other
+
+                        if (displacement > 0) continue
+
+                        displacement = max(displacement, other.y - block.y + 1)
+                    }
+                }
             }
-
-            if (finalMove > maxY - block.y) finalMove = maxY - block.y
-            else if (finalMove < minY - block.y) finalMove = minY - block.y
         }
         else
         {
             // Block moves left and right
 
-            var minX: Int = 0
-            var maxX: Int = viewModel.getWidth() - block.size
+            displacement = min(displacement, viewModel.getWidth() - block.size - block.x)
+            displacement = max(displacement, - block.x)
 
             for (other in viewModel.getBlocks())
             {
-                if (block == other || block.y < other.y || block.y >= other.y + other.size) continue
+                if (other == block) continue
 
-                if (other.x < block.x && other.x >= minX) minX = other.x + 1
-                if (other.x > block.x && other.x <= maxX) maxX = other.x - block.size
+                if (other.direction == Direction.Vertical)
+                {
+                    // Blocks move in different directions
+
+                    if (block.y < other.y || block.y >= other.y + other.size) continue
+
+                    if (block.x < other.x)
+                    {
+                        // Block is to the left of other
+
+                        if (displacement < 0) continue
+
+                        displacement = min(displacement, other.x - block.x - block.size)
+                    }
+                    else
+                    {
+                        // Block is to the right of other
+
+                        if (displacement > 0) continue
+
+                        displacement = max(displacement, other.x - block.x + 1)
+                    }
+                }
+                else
+                {
+                    // Blocks both move in the same direction
+
+                    if (other.y != block.y) continue
+
+                    if (block.x < other.x)
+                    {
+                        // Block is to the left of other
+
+                        if (displacement < 0) continue
+
+                        displacement = min(displacement, other.x - block.x - block.size)
+                    }
+                    else
+                    {
+                        // Block is to the right of other
+
+                        if (displacement > 0) continue
+
+                        displacement = max(displacement, other.x - block.x + other.size)
+                    }
+                }
             }
-
-            if (finalMove > maxX - block.x) finalMove = maxX - block.x
-            else if (finalMove < minX - block.x) finalMove = minX - block.x
         }
 
-        return finalMove
+        return displacement
     }
 
+    // Handle click on block
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event != null)
         {
             val x: Float = event.x
             val y: Float = event.y
 
+            // Start holding block
             if (event.action == MotionEvent.ACTION_DOWN) {
                 val blockTouched: UnblockMeBlock? = getBlockAt(x.toInt(), y.toInt())
 
@@ -273,8 +312,9 @@ class UnblockMeGameView : View {
 
                 return true
             }
+            // Stop holding block
             else if (event.action == MotionEvent.ACTION_UP) {
-                onBlockDragEnded(x, y)
+                onBlockDragEnded()
                 return true
             }
             else {
@@ -286,19 +326,27 @@ class UnblockMeGameView : View {
         return false
     }
 
+    // Draw and paint blocks on the board
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         for (block in viewModel.getBlocks())
         {
-            var brush: Paint = Paint()
-
-            if (block.isWinner) brush.setARGB(255, 255, 0, 0)
-            else brush.setARGB(255, 0, 0, 255)
+            if (block.isWinner) {
+                fill.color = Color.RED
+            }
+            else {
+                fill.color = Color.BLUE
+            }
+            fill.style = Paint.Style.FILL
+            stroke.color = Color.BLACK
+            stroke.style = Paint.Style.STROKE
+            stroke.strokeWidth = 7f
 
             val rect = getBlockRect(block)
-            
-            canvas.apply { drawRect(rect, brush)  }
+
+            canvas.apply { drawRect(rect, fill)  }
+            canvas.apply { drawRect(rect, stroke)  }
         }
     }
 }

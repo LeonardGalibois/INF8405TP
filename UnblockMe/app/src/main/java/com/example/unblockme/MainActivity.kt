@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.ComponentActivity
-import com.example.unblockme.R
 
 class  MainActivity : ComponentActivity() {
 
@@ -17,18 +16,21 @@ class  MainActivity : ComponentActivity() {
         findViewById<Button>(R.id.exit_button).setOnClickListener { exit() }
     }
 
+    // Play the game (level 1)
     private fun play()
     {
         val intent = Intent(this, GameActivity::class.java)
         startActivity(intent)
     }
 
+    // Show team members
     private fun about()
     {
         val intent = Intent(this, AboutActivity::class.java)
         startActivity(intent)
     }
 
+    // Close the application
     private fun exit()
     {
         finishAndRemoveTask()
