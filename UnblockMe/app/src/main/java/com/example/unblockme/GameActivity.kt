@@ -13,7 +13,6 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.viewModels
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import kotlinx.coroutines.runBlocking
 
@@ -43,7 +42,7 @@ class GameActivity : AppCompatActivity() {
         val nbMinimalObserver = Observer<Int>{nbMinimal ->
             highScoreDisplay.text = "Record : ${updateHighscore().takeUnless { it == 0 }?: "--"}/$nbMinimal"
         }
-        gameViewModel.nbrMinimal.observe(this,nbMinimalObserver);
+        gameViewModel.nbrMinimal.observe(this,nbMinimalObserver)
 
         val undoBtn: ImageButton = findViewById<ImageButton>(R.id.undo_button)
         val restartBtn: ImageButton = findViewById<ImageButton>(R.id.restart_button)
@@ -51,11 +50,8 @@ class GameActivity : AppCompatActivity() {
         findViewById<Button>(R.id.menu_button).setOnClickListener { back() }
         findViewById<ImageButton>(R.id.undo_button).setOnClickListener { undo() }
         findViewById<ImageButton>(R.id.restart_button).setOnClickListener { restart() }
-        findViewById<ImageButton>(R.id.previous_button).setOnClickListener { previousPuzzle()
-
-        }
-        findViewById<ImageButton>(R.id.next_button).setOnClickListener { nextPuzzle()
-        }
+        findViewById<ImageButton>(R.id.previous_button).setOnClickListener { previousPuzzle() }
+        findViewById<ImageButton>(R.id.next_button).setOnClickListener { nextPuzzle() }
 
         board = findViewById<UnblockMeGameView>(R.id.board)
         puzzleNumber = findViewById<TextView>(R.id.puzzle_number) as TextView
@@ -72,8 +68,7 @@ class GameActivity : AppCompatActivity() {
         gameViewModel.successWindow.observe(this) {
             gameViewModel.moveNumber.value?.let { score ->
                 runBlocking {
-                    dataStoreManager.setHighscore(gameViewModel.getCurrentPuzzleNumber(),
-                        score)
+                    dataStoreManager.setHighscore(gameViewModel.getCurrentPuzzleNumber(), score)
                 }
             }
             openSuccessWindow()

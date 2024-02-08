@@ -21,6 +21,7 @@ class DataStoreManager(context: Context) {
     }
 
     suspend fun setHighscore(puzzleNumber: Int, newScore: Int) {
+        if (newScore >= getHighscore(puzzleNumber)) return
         dataStore.edit { highscores ->
             highscores[getPreferencesKey(puzzleNumber)] = newScore
         }
