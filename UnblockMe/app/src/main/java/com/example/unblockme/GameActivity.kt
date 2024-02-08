@@ -28,7 +28,6 @@ class GameActivity : AppCompatActivity() {
         Log.d("Test", "Entered game!")
 
         findViewById<Button>(R.id.menu_button).setOnClickListener { back() }
-        findViewById<Button>(R.id.success_button).setOnClickListener { openSuccessWindow() }
         findViewById<ImageButton>(R.id.undo_button).setOnClickListener { undo() }
         findViewById<ImageButton>(R.id.restart_button).setOnClickListener { restart() }
         findViewById<ImageButton>(R.id.previous_button).setOnClickListener { previousPuzzle() }
@@ -43,6 +42,11 @@ class GameActivity : AppCompatActivity() {
         gameViewModel.moveNumber.observe(this) { nbMoves: Int ->
             movesCounter?.text = nbMoves.toString()
         }
+
+        gameViewModel.successWindow.observe(this) {
+            openSuccessWindow()
+        }
+
         updatePuzzleSelection()
     }
 
@@ -95,13 +99,16 @@ class GameActivity : AppCompatActivity() {
     // Show success window when completing a puzzle
     private fun openSuccessWindow()
     {
+        // Open success window
         val successWindow = Dialog(this)
         successWindow.setContentView(R.layout.success_window)
         successWindow.show()
 
+        // Play sound
         val successSound: MediaPlayer = MediaPlayer.create(this, R.raw.success_sound)
         successSound.start()
 
+        // Close window after 3 seconds
         Handler(Looper.getMainLooper()).postDelayed({
             successWindow.dismiss()
             nextPuzzle()

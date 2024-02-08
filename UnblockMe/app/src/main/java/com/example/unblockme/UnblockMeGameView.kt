@@ -15,10 +15,6 @@ import kotlin.math.min
 import kotlin.math.max
 import kotlin.math.roundToInt
 
-/**
- * TODO: document your custom view class.
- */
-
 data class BlockDrag(val block: UnblockMeBlock, val startX: Float, val startY: Float)
 {
     var move: Int = 0
@@ -59,6 +55,7 @@ class UnblockMeGameView : View {
         a.recycle()
     }
 
+    // Get block position on the board
     private fun getBlockRect(block: UnblockMeBlock): Rect
     {
         val cellSize: Float = width.toFloat() / viewModel.getWidth().toFloat()
@@ -113,6 +110,7 @@ class UnblockMeGameView : View {
         return null
     }
 
+    // Start dragging the block
     private fun onBlockDragBegin(block: UnblockMeBlock, x: Float, y: Float)
     {
         _ongoingDrag = BlockDrag(block, x, y)
@@ -120,6 +118,7 @@ class UnblockMeGameView : View {
         Log.d("UnblockMeGameView","Started dragging block that was at (${block.x}, ${block.y})")
     }
 
+    // Stop dragging the block
     private fun onBlockDragEnded()
     {
         if (_ongoingDrag == null) return
@@ -133,12 +132,17 @@ class UnblockMeGameView : View {
         {
             Log.d("UnblockMeGameView", "Moved block by $move units")
             viewModel.moveBlock(block, move)
+            if (block.isWinner && block.x == 4)
+            {
+                viewModel.triggerSuccessWindow()
+            }
             invalidate()
         }
         _ongoingDrag = null
 
     }
 
+    // Handle block movement
     private fun onBlockDragged(x: Float, y: Float)
     {
         if (_ongoingDrag == null) return
@@ -293,12 +297,14 @@ class UnblockMeGameView : View {
         return displacement
     }
 
+    // Handle click on block
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event != null)
         {
             val x: Float = event.x
             val y: Float = event.y
 
+            // Start holding block
             if (event.action == MotionEvent.ACTION_DOWN) {
                 val blockTouched: UnblockMeBlock? = getBlockAt(x.toInt(), y.toInt())
 
@@ -306,6 +312,7 @@ class UnblockMeGameView : View {
 
                 return true
             }
+            // Stop holding block
             else if (event.action == MotionEvent.ACTION_UP) {
                 onBlockDragEnded()
                 return true
@@ -319,6 +326,7 @@ class UnblockMeGameView : View {
         return false
     }
 
+    // Draw and paint blocks on the board
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
@@ -336,7 +344,7 @@ class UnblockMeGameView : View {
             stroke.strokeWidth = 7f
 
             val rect = getBlockRect(block)
-            
+
             canvas.apply { drawRect(rect, fill)  }
             canvas.apply { drawRect(rect, stroke)  }
         }
