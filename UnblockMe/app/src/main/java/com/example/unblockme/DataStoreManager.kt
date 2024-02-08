@@ -8,10 +8,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "highscores")
 class DataStoreManager(context: Context) {
-
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "highscores")
     private val dataStore = context.dataStore
 
     companion object {
