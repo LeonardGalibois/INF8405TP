@@ -11,4 +11,5 @@
             \tMikael Potvin\n
     </string>
     <string name="application_version">Version 1.0</string>
+    <string name="swap_theme">Swap Theme</string>
 </resources>
