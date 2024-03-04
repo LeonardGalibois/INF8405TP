@@ -1,16 +1,29 @@
 package com.example.tp2
 
+import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.ToggleButton
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : ComponentActivity() {
+    private lateinit var deviceAdapter: BluetoothDeviceAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val bluetoothDevices = listOf<BluetoothDevice>()
+
+        val recyclerView: RecyclerView = findViewById(R.id.devices_list)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
+        deviceAdapter = BluetoothDeviceAdapter(bluetoothDevices)
+        recyclerView.adapter = deviceAdapter
 
         val themeButton: ToggleButton = findViewById(R.id.theme_button)
         themeButton.text = getString(R.string.swap_theme)

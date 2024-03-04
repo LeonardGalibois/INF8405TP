@@ -12,4 +12,6 @@
     </string>
     <string name="application_version">Version 1.0</string>
     <string name="swap_theme">Swap Theme</string>
+    <string name="device_name">Device name</string>
+    <string name="device_address">Device address</string>
 </resources>
