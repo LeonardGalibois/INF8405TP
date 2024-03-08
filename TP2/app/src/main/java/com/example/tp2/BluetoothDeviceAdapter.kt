@@ -21,8 +21,7 @@ class BluetoothDeviceAdapter(private val devices: List<BluetoothDevice>, private
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val device = devices[position]
-        // TODO: Fix device name
-        // holder.deviceName.text = device.name ?: "Unknown Device"
+        holder.deviceName.text = device.name ?: "Unknown Device"
         holder.deviceAddress.text = device.address
 
         holder.itemView.setOnClickListener {

@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
     {
         if (!locationPermissionGranted) return
 
-        var locationManager: LocationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+        val locationManager: LocationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         locationManager.requestLocationUpdates(LocationManager.FUSED_PROVIDER, LOCATION_UPDATE_FREQUENCY_MS, 0f, this)
     }
 
@@ -165,8 +165,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         // Make sure there is a current location available
         if (currentLocation == null) return null
 
-        var marker: MarkerOptions = MarkerOptions()
-
+        val marker = MarkerOptions()
 
         val icon: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.bluetooth_icon)
         val resizedIcon: Bitmap = Bitmap.createScaledBitmap(icon, BLUETOOTH_MARKER_ICON_WIDTH, BLUETOOTH_MARKER_ICON_HEIGHT, false)

@@ -8,17 +8,21 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/devices_list"
-        android:layout_width="match_parent"
+        android:layout_width="250dp"
         android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map_fragment"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_toStartOf="@id/devices_list"
         >
-
     </androidx.fragment.app.FragmentContainerView>
 
     <ToggleButton
