@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Dialog
 import android.bluetooth.BluetoothDevice
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -13,6 +14,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -181,6 +183,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         // TODO: Implement device details
         val deviceDetails = Dialog(this)
         deviceDetails.setContentView(R.layout.device_details)
+
+        val shareIcon = deviceDetails.findViewById<ImageView>(R.id.share_icon)
+        shareIcon.setOnClickListener {
+            shareDevice(device)
+        }
+
         deviceDetails.show()
+    }
+
+    private fun shareDevice(device: BluetoothDevice) {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "text/plain"
+        intent.putExtra(Intent.EXTRA_TEXT, "Check out this Bluetooth device: ${device.name}, ${device.address}")
+        startActivity(Intent.createChooser(intent, "Share Device Details"))
     }
 }
