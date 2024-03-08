@@ -1,5 +1,6 @@
 package com.example.tp2
 
+import android.app.Dialog
 import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.content.SharedPreferences
@@ -22,7 +23,7 @@ class MainActivity : ComponentActivity() {
         val recyclerView: RecyclerView = findViewById(R.id.devices_list)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        deviceAdapter = BluetoothDeviceAdapter(bluetoothDevices)
+        deviceAdapter = BluetoothDeviceAdapter(bluetoothDevices) { device -> showDeviceDetails(device) }
         recyclerView.adapter = deviceAdapter
 
         val themeButton: ToggleButton = findViewById(R.id.theme_button)
@@ -50,5 +51,12 @@ class MainActivity : ComponentActivity() {
             }
             editor.apply()
         }
+    }
+
+    private fun showDeviceDetails(device: BluetoothDevice) {
+        // TODO: Implement device details
+        val deviceDetails = Dialog(this)
+        deviceDetails.setContentView(R.layout.device_details)
+        deviceDetails.show()
     }
 }

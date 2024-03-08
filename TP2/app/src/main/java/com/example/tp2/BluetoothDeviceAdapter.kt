@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class BluetoothDeviceAdapter(private val devices: List<BluetoothDevice>) : RecyclerView.Adapter<BluetoothDeviceAdapter.ViewHolder>() {
+class BluetoothDeviceAdapter(private val devices: List<BluetoothDevice>, private val onItemClick: (BluetoothDevice) -> Unit) : RecyclerView.Adapter<BluetoothDeviceAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val deviceName: TextView = itemView.findViewById(R.id.device_name)
@@ -24,6 +24,10 @@ class BluetoothDeviceAdapter(private val devices: List<BluetoothDevice>) : Recyc
         // TODO: Fix device name
         // holder.deviceName.text = device.name ?: "Unknown Device"
         holder.deviceAddress.text = device.address
+
+        holder.itemView.setOnClickListener {
+            onItemClick.invoke(device)
+        }
     }
 
     override fun getItemCount(): Int {
