@@ -15,6 +15,7 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -185,12 +186,38 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         val deviceDetails = Dialog(this)
         deviceDetails.setContentView(R.layout.device_details)
 
+        val deviceName: TextView = deviceDetails.findViewById(R.id.device_name)
+        val deviceAddress: TextView = deviceDetails.findViewById(R.id.device_address)
+        val deviceClass: TextView = deviceDetails.findViewById(R.id.device_class)
+        val deviceLocation: TextView = deviceDetails.findViewById(R.id.device_location)
+        val pairedDevices: TextView = deviceDetails.findViewById(R.id.paired_devices)
+        
+        deviceName.text = device.name
+        deviceAddress.text = device.address
+        deviceClass.text = device.bluetoothClass.majorDeviceClass.toString()
+        
+        val location = getLocationOfDeviceDetection(device)
+        deviceLocation.text = location
+        
+        val pairedDevicesInfo = getPairedDevicesInfo(device)
+        pairedDevices.text = pairedDevicesInfo
+
         val shareIcon = deviceDetails.findViewById<ImageView>(R.id.share_icon)
         shareIcon.setOnClickListener {
             shareDevice(device)
         }
 
         deviceDetails.show()
+    }
+
+    private fun getLocationOfDeviceDetection(device: BluetoothDevice): String {
+        // TODO: Implement locations of device detection
+        return ""
+    }
+
+    private fun getPairedDevicesInfo(device: BluetoothDevice): String {
+        // TODO: Implement paired devices info
+        return ""
     }
 
     private fun toggleFavorite(device: BluetoothDevice) {

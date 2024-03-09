@@ -14,5 +14,7 @@
     <string name="swap_theme">Swap Theme</string>
     <string name="device_name">Device name</string>
     <string name="device_address">Device address</string>
-    <string name="title_activity_maps">MapsActivity</string>
+    <string name="device_location">Device location</string>
+    <string name="device_class">Device class</string>
+    <string name="paired_devices_info">Paired devices info</string>
 </resources>

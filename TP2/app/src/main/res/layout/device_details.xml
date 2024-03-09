@@ -20,4 +20,54 @@
         android:layout_alignParentTop="true"
         android:src="@drawable/share_icon" />
 
+    <TextView
+        android:id="@+id/device_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/favorite_icon"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:text="@string/device_name"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/device_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/device_name"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:text="@string/device_address"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/device_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/device_address"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:text="@string/device_location"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/device_class"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/device_location"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:text="@string/device_class"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/paired_devices"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/device_class"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:text="@string/paired_devices_info"
+        android:textSize="20sp"/>
+
 </RelativeLayout>
