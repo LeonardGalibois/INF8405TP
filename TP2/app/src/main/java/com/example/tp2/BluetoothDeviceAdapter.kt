@@ -4,14 +4,21 @@ import android.bluetooth.BluetoothDevice
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class BluetoothDeviceAdapter(private val devices: List<BluetoothDevice>, private val onItemClick: (BluetoothDevice) -> Unit) : RecyclerView.Adapter<BluetoothDeviceAdapter.ViewHolder>() {
+class BluetoothDeviceAdapter(
+    private val devices: List<BluetoothDevice>,
+    private val onItemClick: (BluetoothDevice) -> Unit,
+    private val onFavoriteClick: (BluetoothDevice) -> Unit
+) : RecyclerView.Adapter<BluetoothDeviceAdapter.ViewHolder>() {
+    var favoritesList: MutableList<BluetoothDevice> = mutableListOf()
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val deviceName: TextView = itemView.findViewById(R.id.device_name)
         val deviceAddress: TextView = itemView.findViewById(R.id.device_address)
+        val favoriteIcon: ImageView = itemView.findViewById(R.id.favorite_icon)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -26,6 +33,12 @@ class BluetoothDeviceAdapter(private val devices: List<BluetoothDevice>, private
 
         holder.itemView.setOnClickListener {
             onItemClick.invoke(device)
+        }
+
+        val isFavorite = favoritesList.contains(device)
+        holder.favoriteIcon.setImageResource(if (isFavorite) R.drawable.filled_star else R.drawable.empty_star)
+        holder.favoriteIcon.setOnClickListener {
+            onFavoriteClick.invoke(device)
         }
     }
 

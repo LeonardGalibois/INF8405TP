@@ -52,14 +52,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-
         val bluetoothDevices = listOf<BluetoothDevice>()
 
         val recyclerView: RecyclerView = findViewById(R.id.devices_list)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        deviceAdapter = BluetoothDeviceAdapter(bluetoothDevices) { device -> showDeviceDetails(device) }
+        deviceAdapter = BluetoothDeviceAdapter(bluetoothDevices,
+            { device -> showDeviceDetails(device) },
+            { device -> toggleFavorite(device) }
+        )
         recyclerView.adapter = deviceAdapter
 
         val themeButton: ToggleButton = findViewById(R.id.theme_button)
@@ -190,6 +191,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         }
 
         deviceDetails.show()
+    }
+
+    private fun toggleFavorite(device: BluetoothDevice) {
+        val isFavorite = deviceAdapter.favoritesList.contains(device)
+        if (!isFavorite) {
+            deviceAdapter.favoritesList.add(device)
+        }
+        else {
+            deviceAdapter.favoritesList.remove(device)
+        }
+        deviceAdapter.notifyDataSetChanged()
     }
 
     private fun shareDevice(device: BluetoothDevice) {
