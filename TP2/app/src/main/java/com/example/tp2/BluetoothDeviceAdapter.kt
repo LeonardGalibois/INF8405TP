@@ -23,15 +23,16 @@ class BluetoothDeviceEntry(
 
 }
 class BluetoothDeviceAdapter(
-    val devices: MutableList<BluetoothDeviceEntry>,
+    private val devices: List<BluetoothDeviceEntry>,
     private val onItemClick: (BluetoothDeviceEntry) -> Unit,
-    private val onFavoriteClick: (BluetoothDeviceEntry) -> Unit
+    private val onFavoriteClick: (BluetoothDeviceEntry) -> Unit,
+    var permissionGranted: Boolean = false
 ) : RecyclerView.Adapter<BluetoothDeviceAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val deviceName: TextView = itemView.findViewById(R.id.device_name)
         val deviceAddress: TextView = itemView.findViewById(R.id.device_address)
-        val favoriteIcon: ImageView = itemView.findViewById(R.id.favorite_icon)
+        //val favoriteIcon: ImageView = itemView.findViewById(R.id.favorite_icon)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -42,17 +43,25 @@ class BluetoothDeviceAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val entry = devices[position]
 
-        holder.deviceName.text = "test"//entry.device.name ?: "Unknown Device"
+        if(permissionGranted)
+        {
+            holder.deviceName.text = entry.device.name ?: "Unknown Device"
+        }
+        else
+        {
+            holder.deviceName.text = "Unknown Device"
+        }
+
         holder.deviceAddress.text = entry.device.address
 
         holder.itemView.setOnClickListener {
             onItemClick.invoke(entry)
         }
 
-        holder.favoriteIcon.setImageResource(if (entry.isFavorite) R.drawable.filled_star else R.drawable.empty_star)
-        holder.favoriteIcon.setOnClickListener {
-            onFavoriteClick.invoke(entry)
-        }
+        //holder.favoriteIcon.setImageResource(if (entry.isFavorite) R.drawable.filled_star else R.drawable.empty_star)
+        //holder.favoriteIcon.setOnClickListener {
+        //    onFavoriteClick.invoke(entry)
+        //}
     }
 
     override fun getItemCount(): Int {

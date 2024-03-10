@@ -40,7 +40,8 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 
 private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION  = 1
-private const val PERMISSIONS_REQUEST_BLUETOOTH_SCAN  = 1
+private const val PERMISSIONS_REQUEST_BLUETOOTH_SCAN  = 2
+private const val PERMISSIONS_REQUEST_BLUETOOTH_CONNECT = 3
 private const val DEFAULT_ZOOM = 15
 private const val BLUETOOTH_MARKER_ICON_HEIGHT: Int  = 100
 private const val BLUETOOTH_MARKER_ICON_WIDTH: Int   = 100
@@ -55,16 +56,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
     private var map: GoogleMap? = null
     private var currentLocation: Location? = null
 
+    val bluetoothDevices: ArrayList<BluetoothDeviceEntry> = ArrayList<BluetoothDeviceEntry>()
+
     // Permissions
     private var locationPermissionGranted: Boolean = false
     private var bluetoothPermissionGranted: Boolean = false
+    private var bluetoothConnectPermissionGranted: Boolean = false
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        val bluetoothDevices = mutableListOf<BluetoothDeviceEntry>()
 
         val recyclerView: RecyclerView = findViewById(R.id.devices_list)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -103,6 +105,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
         getLocationPermission()
         getBluetoothPermission()
+        getBluetoothConnectPermission()
 
         initializeMap()
         initializeLocationService()
@@ -120,16 +123,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
                 if(intent.action == BluetoothDevice.ACTION_FOUND)
                 {
                     val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-                    if(device != null && !deviceAdapter.contains(device.address)){
-                        deviceAdapter.devices.add(
+                    if(device != null
+                        && bluetoothDevices.all { bluetoothDeviceEntry -> bluetoothDeviceEntry.device.address != device.address  }){
+                        bluetoothDevices.add(
                             BluetoothDeviceEntry(
                                 device,
                                 false,
                                 currentLocation
                             ))
 
-                        val recyclerView: RecyclerView = findViewById(R.id.devices_list)
-                        recyclerView.invalidate()
+                        deviceAdapter.notifyDataSetChanged()
                     }
                 }
             }
@@ -196,6 +199,20 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun getBluetoothConnectPermission()
+    {
+        if (ContextCompat.checkSelfPermission(this.applicationContext, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED)
+        {
+            bluetoothConnectPermissionGranted = true
+            deviceAdapter.permissionGranted = true
+        }
+        else
+        {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.BLUETOOTH_CONNECT), PERMISSIONS_REQUEST_BLUETOOTH_CONNECT)
+        }
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -214,6 +231,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
                 {
                     bluetoothPermissionGranted = true
                     initializeBluetooth()
+                }
+                PERMISSIONS_REQUEST_BLUETOOTH_CONNECT ->
+                {
+                    bluetoothConnectPermissionGranted = true
+                    deviceAdapter.permissionGranted = true
                 }
             }
         }
