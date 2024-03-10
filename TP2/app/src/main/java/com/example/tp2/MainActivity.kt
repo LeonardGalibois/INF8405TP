@@ -2,9 +2,13 @@ package com.example.tp2
 
 import android.Manifest
 import android.app.Dialog
+import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -12,11 +16,13 @@ import android.graphics.BitmapFactory
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.ToggleButton
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
@@ -34,6 +40,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 
 private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION  = 1
+private const val PERMISSIONS_REQUEST_BLUETOOTH_SCAN  = 1
 private const val DEFAULT_ZOOM = 15
 private const val BLUETOOTH_MARKER_ICON_HEIGHT: Int  = 100
 private const val BLUETOOTH_MARKER_ICON_WIDTH: Int   = 100
@@ -42,18 +49,22 @@ private const val LOCATION_UPDATE_FREQUENCY_MS: Long = 1000
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
     private lateinit var deviceAdapter: BluetoothDeviceAdapter
+    private var bluetoothBroadcastReceiver: BroadcastReceiver? = null
+    private var bluetoothScannerLauncher: BroadcastReceiver? = null
 
     private var map: GoogleMap? = null
     private var currentLocation: Location? = null
 
     // Permissions
     private var locationPermissionGranted: Boolean = false
+    private var bluetoothPermissionGranted: Boolean = false
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val bluetoothDevices = listOf<BluetoothDevice>()
+        val bluetoothDevices = mutableListOf<BluetoothDeviceEntry>()
 
         val recyclerView: RecyclerView = findViewById(R.id.devices_list)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -91,11 +102,58 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         }
 
         getLocationPermission()
+        getBluetoothPermission()
 
         initializeMap()
         initializeLocationService()
+        initializeBluetooth()
     }
 
+    private fun initializeBluetooth()
+    {
+        val bluetoothManager: BluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        val bluetoothAdapter = bluetoothManager.adapter
+
+        bluetoothBroadcastReceiver = object: BroadcastReceiver()
+        {
+            override fun onReceive(context: Context, intent: Intent) {
+                if(intent.action == BluetoothDevice.ACTION_FOUND)
+                {
+                    val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+                    if(device != null && !deviceAdapter.contains(device.address)){
+                        deviceAdapter.devices.add(
+                            BluetoothDeviceEntry(
+                                device,
+                                false,
+                                currentLocation
+                            ))
+
+                        val recyclerView: RecyclerView = findViewById(R.id.devices_list)
+                        recyclerView.invalidate()
+                    }
+                }
+            }
+        }
+
+        bluetoothScannerLauncher = object: BroadcastReceiver()
+        {
+            override fun onReceive(context: Context, intent: Intent) {
+                if(intent.action == BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+                {
+                    bluetoothAdapter.startDiscovery()
+                }
+            }
+        }
+
+        val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
+        registerReceiver(bluetoothBroadcastReceiver, filter)
+
+        val scannerfilter = IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+        registerReceiver(bluetoothScannerLauncher, scannerfilter)
+
+        if(!bluetoothPermissionGranted) return
+        bluetoothAdapter.startDiscovery()
+    }
     private fun initializeMap()
     {
         Log.d("MainActivity", "Intializing Map")
@@ -125,6 +183,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun getBluetoothPermission()
+    {
+        if (ContextCompat.checkSelfPermission(this.applicationContext, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED)
+        {
+            bluetoothPermissionGranted = true
+        }
+        else
+        {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.BLUETOOTH_SCAN), PERMISSIONS_REQUEST_BLUETOOTH_SCAN)
+        }
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -138,6 +209,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
                 {
                     locationPermissionGranted = true
                     initializeLocationService()
+                }
+                PERMISSIONS_REQUEST_BLUETOOTH_SCAN ->
+                {
+                    bluetoothPermissionGranted = true
+                    initializeBluetooth()
                 }
             }
         }
@@ -181,7 +257,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         return map?.addMarker(marker)
     }
 
-    private fun showDeviceDetails(device: BluetoothDevice) {
+    private fun showDeviceDetails(entry: BluetoothDeviceEntry) {
         // TODO: Implement device details
         val deviceDetails = Dialog(this)
         deviceDetails.setContentView(R.layout.device_details)
@@ -192,42 +268,30 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         val deviceLocation: TextView = deviceDetails.findViewById(R.id.device_location)
         val pairedDevices: TextView = deviceDetails.findViewById(R.id.paired_devices)
         
-        deviceName.text = device.name
-        deviceAddress.text = device.address
-        deviceClass.text = device.bluetoothClass.majorDeviceClass.toString()
+        deviceName.text = entry.device.name
+        deviceAddress.text = entry.device.address
+        deviceClass.text = entry.device.bluetoothClass.majorDeviceClass.toString()
+
+        deviceLocation.text = entry.location.toString()
         
-        val location = getLocationOfDeviceDetection(device)
-        deviceLocation.text = location
-        
-        val pairedDevicesInfo = getPairedDevicesInfo(device)
+        val pairedDevicesInfo = getPairedDevicesInfo(entry)
         pairedDevices.text = pairedDevicesInfo
 
         val shareIcon = deviceDetails.findViewById<ImageView>(R.id.share_icon)
         shareIcon.setOnClickListener {
-            shareDevice(device)
+            shareDevice(entry.device)
         }
 
         deviceDetails.show()
     }
 
-    private fun getLocationOfDeviceDetection(device: BluetoothDevice): String {
-        // TODO: Implement locations of device detection
-        return ""
-    }
-
-    private fun getPairedDevicesInfo(device: BluetoothDevice): String {
+    private fun getPairedDevicesInfo(device: BluetoothDeviceEntry): String {
         // TODO: Implement paired devices info
         return ""
     }
 
-    private fun toggleFavorite(device: BluetoothDevice) {
-        val isFavorite = deviceAdapter.favoritesList.contains(device)
-        if (!isFavorite) {
-            deviceAdapter.favoritesList.add(device)
-        }
-        else {
-            deviceAdapter.favoritesList.remove(device)
-        }
+    private fun toggleFavorite(entry: BluetoothDeviceEntry) {
+        entry.isFavorite = !entry.isFavorite
         deviceAdapter.notifyDataSetChanged()
     }
 
@@ -236,5 +300,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         intent.type = "text/plain"
         intent.putExtra(Intent.EXTRA_TEXT, "Check out this Bluetooth device: ${device.name}, ${device.address}")
         startActivity(Intent.createChooser(intent, "Share Device Details"))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        unregisterReceiver(bluetoothBroadcastReceiver)
+        unregisterReceiver(bluetoothScannerLauncher)
     }
 }
