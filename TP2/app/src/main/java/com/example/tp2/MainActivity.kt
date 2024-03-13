@@ -321,9 +321,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         val pairedDevicesInfo = getPairedDevicesInfo(entry)
         pairedDevices.text = pairedDevicesInfo
 
+        val favoriteIcon = deviceDetails.findViewById<ImageView>(R.id.favorite_icon)
+        favoriteIcon.setOnClickListener {
+            toggleFavorite(entry)
+            favoriteIcon.setImageResource(if (entry.isFavorite) R.drawable.filled_star else R.drawable.empty_star)
+        }
+
         val shareIcon = deviceDetails.findViewById<ImageView>(R.id.share_icon)
         shareIcon.setOnClickListener {
-            shareDevice(entry.device)
+            shareDevice(entry)
         }
 
         deviceDetails.show()
@@ -339,10 +345,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         deviceAdapter.notifyDataSetChanged()
     }
 
-    private fun shareDevice(device: BluetoothDevice) {
+    private fun shareDevice(entry: BluetoothDeviceEntry) {
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "text/plain"
-        intent.putExtra(Intent.EXTRA_TEXT, "Check out this Bluetooth device: ${device.name}, ${device.address}")
+        intent.putExtra(Intent.EXTRA_TEXT, "Check out this Bluetooth device: ${entry.device.name}, ${entry.device.address}")
         startActivity(Intent.createChooser(intent, "Share Device Details"))
     }
 
