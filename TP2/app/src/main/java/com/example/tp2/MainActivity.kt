@@ -3,6 +3,7 @@ package com.example.tp2
 import android.Manifest
 import android.app.Dialog
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothClass
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.content.BroadcastReceiver
@@ -132,7 +133,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
                                 currentLocation
                             ))
 
-                        deviceAdapter.notifyDataSetChanged()
+                        addMarkerAtLocation((device.name ?: "Unknown Device"), currentLocation)
+                        deviceAdapter.notifyItemChanged(bluetoothDevices.count() - 1)
                     }
                 }
             }
@@ -262,21 +264,26 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), DEFAULT_ZOOM.toFloat()))
     }
 
-    fun addMarkerAtLocation(title: String): Marker?
+    fun addMarkerAtLocation(title: String, location: Location?): Marker?
     {
         // Make sure there is a current location available
-        if (currentLocation == null) return null
+        if (location == null) return null
 
         val marker = MarkerOptions()
 
         val icon: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.bluetooth_icon)
         val resizedIcon: Bitmap = Bitmap.createScaledBitmap(icon, BLUETOOTH_MARKER_ICON_WIDTH, BLUETOOTH_MARKER_ICON_HEIGHT, false)
 
-        marker.position(LatLng(currentLocation!!.latitude, currentLocation!!.longitude))
+        marker.position(LatLng(location!!.latitude, location!!.longitude))
         marker.title(title)
         marker.icon(BitmapDescriptorFactory.fromBitmap(resizedIcon))
 
         return map?.addMarker(marker)
+    }
+
+    fun addMarkerAtLocation(title: String): Marker?
+    {
+        return addMarkerAtLocation(title, currentLocation)
     }
 
     private fun showDeviceDetails(entry: BluetoothDeviceEntry) {
@@ -290,11 +297,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         val deviceLocation: TextView = deviceDetails.findViewById(R.id.device_location)
         val pairedDevices: TextView = deviceDetails.findViewById(R.id.paired_devices)
         
-        deviceName.text = entry.device.name
-        deviceAddress.text = entry.device.address
-        deviceClass.text = entry.device.bluetoothClass.majorDeviceClass.toString()
-
-        deviceLocation.text = entry.location.toString()
+        deviceName.text = "Name : " + (entry.device.name ?: "Unknown Device")
+        deviceAddress.text = "Mac Address : " + entry.device.address
+        deviceClass.text = "Class : " + getBluetoothClass(entry)
+        deviceLocation.text = "Latitude : " + entry.location?.latitude + "\nLongitude : " + entry.location?.longitude
         
         val pairedDevicesInfo = getPairedDevicesInfo(entry)
         pairedDevices.text = pairedDevicesInfo
@@ -328,6 +334,28 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         intent.type = "text/plain"
         intent.putExtra(Intent.EXTRA_TEXT, "Check out this Bluetooth device: ${entry.device.name}, ${entry.device.address}")
         startActivity(Intent.createChooser(intent, "Share Device Details"))
+    }
+
+    private fun getBluetoothClass(entry: BluetoothDeviceEntry) : String
+    {
+        var result : String = ""
+
+        when(entry.device.bluetoothClass.majorDeviceClass)
+        {
+            BluetoothClass.Device.Major.AUDIO_VIDEO -> result = "Audio video"
+            BluetoothClass.Device.Major.COMPUTER -> result = "Computer"
+            BluetoothClass.Device.Major.HEALTH -> result = "Health"
+            BluetoothClass.Device.Major.MISC -> result = "Misc"
+            BluetoothClass.Device.Major.IMAGING -> result = "Imaging"
+            BluetoothClass.Device.Major.NETWORKING -> result = "Networking"
+            BluetoothClass.Device.Major.PERIPHERAL -> result = "Peripheral"
+            BluetoothClass.Device.Major.PHONE -> result = "Phone"
+            BluetoothClass.Device.Major.TOY -> result = "Toy"
+            BluetoothClass.Device.Major.UNCATEGORIZED -> result = "Uncategorized"
+            BluetoothClass.Device.Major.WEARABLE -> result = "Wearable"
+        }
+
+        return result
     }
 
     override fun onDestroy() {

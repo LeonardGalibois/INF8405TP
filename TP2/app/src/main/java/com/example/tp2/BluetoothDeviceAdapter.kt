@@ -32,7 +32,7 @@ class BluetoothDeviceAdapter(
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val deviceName: TextView = itemView.findViewById(R.id.device_name)
         val deviceAddress: TextView = itemView.findViewById(R.id.device_address)
-        //val favoriteIcon: ImageView = itemView.findViewById(R.id.favorite_icon)
+        //val favoriteIcon: ImageView = itemView.findViewById<ImageView>(R.id.favorite_icon)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -45,14 +45,15 @@ class BluetoothDeviceAdapter(
 
         if(permissionGranted)
         {
-            holder.deviceName.text = entry.device.name ?: "Unknown Device"
+            holder.deviceName.text = "Name : " + (entry.device.name ?: "Unknown Device")
         }
         else
         {
-            holder.deviceName.text = "Unknown Device"
+            holder.deviceName.text = "Name : Unknown Device"
         }
 
-        holder.deviceAddress.text = entry.device.address
+        holder.deviceAddress.text = "MAC address : " + entry.device.address
+
 
         holder.itemView.setOnClickListener {
             onItemClick.invoke(entry)
