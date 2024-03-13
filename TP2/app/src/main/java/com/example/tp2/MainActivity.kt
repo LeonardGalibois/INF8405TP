@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -49,7 +50,7 @@ private const val BLUETOOTH_MARKER_ICON_WIDTH: Int   = 100
 private const val LOCATION_UPDATE_FREQUENCY_MS: Long = 1000
 
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, OnMarkerClickListener {
     private lateinit var deviceAdapter: BluetoothDeviceAdapter
     private var bluetoothBroadcastReceiver: BroadcastReceiver? = null
     private var bluetoothScannerLauncher: BroadcastReceiver? = null
@@ -255,6 +256,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
         map?.isMyLocationEnabled = true
         map?.uiSettings?.isMyLocationButtonEnabled = true
+
+        // Add marker clicked listener
+        map?.setOnMarkerClickListener(this)
     }
 
     override fun onLocationChanged(location: Location) {
@@ -262,6 +266,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         currentLocation = location
 
         map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), DEFAULT_ZOOM.toFloat()))
+    }
+
+    override fun onMarkerClick(marker: Marker): Boolean {
+        for (device in bluetoothDevices)
+        {
+            if (device.marker != marker) continue
+
+            showDeviceDetails(device)
+            return true
+        }
+
+        return false
     }
 
     fun addMarkerAtLocation(title: String, location: Location?): Marker?

@@ -14,11 +14,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.maps.model.Marker
 
 class BluetoothDeviceEntry(
     var device: BluetoothDevice,
     var isFavorite: Boolean,
-    var location: Location?)
+    var location: Location?,
+    var marker: Marker?)
 {
 
 }
