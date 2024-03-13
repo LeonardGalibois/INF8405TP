@@ -131,10 +131,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
                             BluetoothDeviceEntry(
                                 device,
                                 false,
-                                currentLocation
+                                currentLocation,
+                                addMarkerAtLocation((device.name ?: "Unknown Device"), currentLocation)
                             ))
-
-                        addMarkerAtLocation((device.name ?: "Unknown Device"), currentLocation)
                         deviceAdapter.notifyItemChanged(bluetoothDevices.count() - 1)
                     }
                 }
