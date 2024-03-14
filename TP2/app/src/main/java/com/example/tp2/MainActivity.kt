@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -50,8 +51,7 @@ private const val BLUETOOTH_MARKER_ICON_WIDTH: Int   = 100
 private const val LOCATION_UPDATE_FREQUENCY_MS: Long = 1000
 
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
-    lateinit var database: AppDatabase
+class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, OnMarkerClickListener {
     private lateinit var deviceAdapter: BluetoothDeviceAdapter
     private var bluetoothBroadcastReceiver: BroadcastReceiver? = null
     private var bluetoothScannerLauncher: BroadcastReceiver? = null
@@ -270,6 +270,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         {
             addMarkerAtLocation(entry.name, entry.latitude, entry.longitude)
         }
+        // Add marker clicked listener
+        map?.setOnMarkerClickListener(this)
     }
 
     override fun onLocationChanged(location: Location) {
@@ -280,6 +282,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
     }
 
     fun addMarkerAtLocation(title: String, latitude: Double?, longitude: Double?): Marker?
+    override fun onMarkerClick(marker: Marker): Boolean {
+        for (device in bluetoothDevices)
+        {
+            if (device.marker != marker) continue
+
+            showDeviceDetails(device)
+            return true
+        }
+
+        return false
+    }
+
+    fun addMarkerAtLocation(title: String, location: Location?): Marker?
     {
         // Make sure there is a current location available
         if (latitude == null || longitude == null) return null
@@ -319,6 +334,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         
         val pairedDevicesInfo = getPairedDevicesInfo(entry)
         pairedDevices.text = pairedDevicesInfo
+
+        val favoriteIcon = deviceDetails.findViewById<ImageView>(R.id.favorite_icon)
+        favoriteIcon.setOnClickListener {
+            toggleFavorite(entry)
+            favoriteIcon.setImageResource(if (entry.isFavorite) R.drawable.filled_star else R.drawable.empty_star)
+        }
 
         val shareIcon = deviceDetails.findViewById<ImageView>(R.id.share_icon)
         shareIcon.setOnClickListener {

@@ -14,6 +14,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.maps.model.Marker
 
 
 class BluetoothDeviceAdapter(
