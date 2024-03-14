@@ -131,7 +131,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
                 {
                     val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
                     if(device != null){
-                        val entry = BluetoothDeviceEntry(
+                        var entry = BluetoothDeviceEntry(
                             device.address,
                             false,
                             (device.name ?: "Unknown Device"),
@@ -139,14 +139,22 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
                             currentLocation?.latitude,
                             currentLocation?.longitude
                         )
-                        entry.marker = addMarkerAtLocation(entry.name, entry.latitude, entry.longitude)
-                        database.bluetoothDao().insertAll(entry)
 
-                        if(bluetoothDevices.all { bluetoothDeviceEntry -> bluetoothDeviceEntry.macAddress != device.address  })
+
+                        if(bluetoothDevices.all { bluetoothDeviceEntry -> bluetoothDeviceEntry.macAddress != device.address })
                         {
+                            database.bluetoothDao().insertAll(entry)
                             bluetoothDevices.add(entry)
-                            deviceAdapter.notifyItemChanged(bluetoothDevices.count() - 1)
                         }
+                        else
+                        {
+                           entry = bluetoothDevices.first { bluetoothDeviceEntry -> bluetoothDeviceEntry.macAddress == device.address }
+                            database.bluetoothDao().updateLatitude(entry.macAddress, entry.latitude)
+                            database.bluetoothDao().updateLongitude(entry.macAddress, entry.longitude)
+                        }
+
+                        entry.marker = addMarkerAtLocation(entry.name, entry.latitude, entry.longitude)
+                        deviceAdapter.notifyDataSetChanged()
                     }
                 }
             }
@@ -339,6 +347,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         pairedDevices.text = pairedDevicesInfo
 
         val favoriteIcon = deviceDetails.findViewById<ImageView>(R.id.favorite_icon)
+        favoriteIcon.setImageResource(if (entry.isFavorite) R.drawable.filled_star else R.drawable.empty_star)
         favoriteIcon.setOnClickListener {
             toggleFavorite(entry)
             favoriteIcon.setImageResource(if (entry.isFavorite) R.drawable.filled_star else R.drawable.empty_star)
@@ -359,7 +368,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
 
     private fun toggleFavorite(entry: BluetoothDeviceEntry) {
         entry.isFavorite = !entry.isFavorite
-
+        database.bluetoothDao().updateFavorite(entry.macAddress, entry.isFavorite)
         deviceAdapter.notifyDataSetChanged()
     }
 

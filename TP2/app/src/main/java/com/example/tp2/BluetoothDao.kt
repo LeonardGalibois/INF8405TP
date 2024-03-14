@@ -14,6 +14,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.RoomDatabase
+import androidx.room.Update
 import com.google.android.gms.maps.model.Marker
 
 @Entity
@@ -39,8 +40,15 @@ interface BluetoothDao {
     @Query("SELECT * FROM BluetoothDeviceEntry WHERE macAddress IN (:mac)")
     fun loadAllByIds(mac: String): List<BluetoothDeviceEntry>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert
     fun insertAll(vararg entry: BluetoothDeviceEntry)
+
+    @Query("UPDATE BluetoothDeviceEntry SET Favorite=:isFavorite WHERE macAddress=:mac")
+    fun updateFavorite(mac: String, isFavorite: Boolean)
+    @Query("UPDATE BluetoothDeviceEntry SET Latitude=:newlatitude WHERE macAddress=:mac")
+    fun updateLatitude(mac: String, newlatitude: Double?)
+    @Query("UPDATE BluetoothDeviceEntry SET Longitude=:newlongitude WHERE macAddress=:mac")
+    fun updateLongitude(mac: String, newlongitude: Double?)
 
     @Delete
     fun delete(user: BluetoothDeviceEntry)
