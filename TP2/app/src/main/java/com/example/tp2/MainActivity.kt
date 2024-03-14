@@ -30,6 +30,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -50,6 +51,7 @@ private const val LOCATION_UPDATE_FREQUENCY_MS: Long = 1000
 
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
+    lateinit var database: AppDatabase
     private lateinit var deviceAdapter: BluetoothDeviceAdapter
     private var bluetoothBroadcastReceiver: BroadcastReceiver? = null
     private var bluetoothScannerLauncher: BroadcastReceiver? = null
@@ -57,7 +59,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
     private var map: GoogleMap? = null
     private var currentLocation: Location? = null
 
-    val bluetoothDevices: ArrayList<BluetoothDeviceEntry> = ArrayList<BluetoothDeviceEntry>()
+    var bluetoothDevices: ArrayList<BluetoothDeviceEntry> = ArrayList()
 
     // Permissions
     private var locationPermissionGranted: Boolean = false
@@ -68,6 +70,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        database = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "bluetoothDevices").allowMainThreadQueries().build()
+        bluetoothDevices.addAll(database.bluetoothDao().getAll())
 
         val recyclerView: RecyclerView = findViewById(R.id.devices_list)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -124,17 +128,23 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
                 if(intent.action == BluetoothDevice.ACTION_FOUND)
                 {
                     val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-                    if(device != null
-                        && bluetoothDevices.all { bluetoothDeviceEntry -> bluetoothDeviceEntry.device.address != device.address  }){
-                        bluetoothDevices.add(
-                            BluetoothDeviceEntry(
-                                device,
-                                false,
-                                currentLocation
-                            ))
+                    if(device != null){
+                        val entry = BluetoothDeviceEntry(
+                            device.address,
+                            false,
+                            (device.name ?: "Unknown Device"),
+                            device.bluetoothClass.majorDeviceClass,
+                            currentLocation?.latitude,
+                            currentLocation?.longitude
+                        )
+                        addMarkerAtLocation(entry.name, entry.latitude, entry.longitude)
+                        database.bluetoothDao().insertAll(entry)
 
-                        addMarkerAtLocation((device.name ?: "Unknown Device"), currentLocation)
-                        deviceAdapter.notifyItemChanged(bluetoothDevices.count() - 1)
+                        if(bluetoothDevices.all { bluetoothDeviceEntry -> bluetoothDeviceEntry.macAddress != device.address  })
+                        {
+                            bluetoothDevices.add(entry)
+                            deviceAdapter.notifyItemChanged(bluetoothDevices.count() - 1)
+                        }
                     }
                 }
             }
@@ -255,6 +265,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
         map?.isMyLocationEnabled = true
         map?.uiSettings?.isMyLocationButtonEnabled = true
+
+        for (entry : BluetoothDeviceEntry in bluetoothDevices)
+        {
+            addMarkerAtLocation(entry.name, entry.latitude, entry.longitude)
+        }
     }
 
     override fun onLocationChanged(location: Location) {
@@ -264,17 +279,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), DEFAULT_ZOOM.toFloat()))
     }
 
-    fun addMarkerAtLocation(title: String, location: Location?): Marker?
+    fun addMarkerAtLocation(title: String, latitude: Double?, longitude: Double?): Marker?
     {
         // Make sure there is a current location available
-        if (location == null) return null
+        if (latitude == null || longitude == null) return null
 
         val marker = MarkerOptions()
 
         val icon: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.bluetooth_icon)
         val resizedIcon: Bitmap = Bitmap.createScaledBitmap(icon, BLUETOOTH_MARKER_ICON_WIDTH, BLUETOOTH_MARKER_ICON_HEIGHT, false)
 
-        marker.position(LatLng(location!!.latitude, location!!.longitude))
+        marker.position(LatLng(latitude, longitude))
         marker.title(title)
         marker.icon(BitmapDescriptorFactory.fromBitmap(resizedIcon))
 
@@ -283,7 +298,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
     fun addMarkerAtLocation(title: String): Marker?
     {
-        return addMarkerAtLocation(title, currentLocation)
+        return addMarkerAtLocation(title, currentLocation?.latitude, currentLocation?.longitude)
     }
 
     private fun showDeviceDetails(entry: BluetoothDeviceEntry) {
@@ -297,17 +312,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         val deviceLocation: TextView = deviceDetails.findViewById(R.id.device_location)
         val pairedDevices: TextView = deviceDetails.findViewById(R.id.paired_devices)
         
-        deviceName.text = "Name : " + (entry.device.name ?: "Unknown Device")
-        deviceAddress.text = "Mac Address : " + entry.device.address
+        deviceName.text = "Name : " + entry.name
+        deviceAddress.text = "Mac Address : " + entry.macAddress
         deviceClass.text = "Class : " + getBluetoothClass(entry)
-        deviceLocation.text = "Latitude : " + entry.location?.latitude + "\nLongitude : " + entry.location?.longitude
+        deviceLocation.text = "Latitude : " + entry.latitude + "\nLongitude : " + entry.longitude
         
         val pairedDevicesInfo = getPairedDevicesInfo(entry)
         pairedDevices.text = pairedDevicesInfo
 
         val shareIcon = deviceDetails.findViewById<ImageView>(R.id.share_icon)
         shareIcon.setOnClickListener {
-            shareDevice(entry.device)
+            shareDevice(entry)
         }
 
         deviceDetails.show()
@@ -323,10 +338,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         deviceAdapter.notifyDataSetChanged()
     }
 
-    private fun shareDevice(device: BluetoothDevice) {
+    private fun shareDevice(device: BluetoothDeviceEntry) {
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "text/plain"
-        intent.putExtra(Intent.EXTRA_TEXT, "Check out this Bluetooth device: ${device.name}, ${device.address}")
+        intent.putExtra(Intent.EXTRA_TEXT, "Check out this Bluetooth device: ${device.name}, ${device.macAddress}")
         startActivity(Intent.createChooser(intent, "Share Device Details"))
     }
 
@@ -334,7 +349,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
     {
         var result : String = ""
 
-        when(entry.device.bluetoothClass.majorDeviceClass)
+        when(entry.majorClass)
         {
             BluetoothClass.Device.Major.AUDIO_VIDEO -> result = "Audio video"
             BluetoothClass.Device.Major.COMPUTER -> result = "Computer"

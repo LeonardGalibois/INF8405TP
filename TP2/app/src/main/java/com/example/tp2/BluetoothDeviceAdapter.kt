@@ -15,13 +15,7 @@ import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.RecyclerView
 
-class BluetoothDeviceEntry(
-    var device: BluetoothDevice,
-    var isFavorite: Boolean,
-    var location: Location?)
-{
 
-}
 class BluetoothDeviceAdapter(
     private val devices: List<BluetoothDeviceEntry>,
     private val onItemClick: (BluetoothDeviceEntry) -> Unit,
@@ -45,14 +39,14 @@ class BluetoothDeviceAdapter(
 
         if(permissionGranted)
         {
-            holder.deviceName.text = "Name : " + (entry.device.name ?: "Unknown Device")
+            holder.deviceName.text = "Name : " + entry.name
         }
         else
         {
             holder.deviceName.text = "Name : Unknown Device"
         }
 
-        holder.deviceAddress.text = "MAC address : " + entry.device.address
+        holder.deviceAddress.text = "MAC address : " + entry.macAddress
 
 
         holder.itemView.setOnClickListener {
@@ -67,14 +61,5 @@ class BluetoothDeviceAdapter(
 
     override fun getItemCount(): Int {
         return devices.size
-    }
-
-    fun contains(address : String) : Boolean
-    {
-        for (entry: BluetoothDeviceEntry in devices)
-        {
-            if(address == entry.device.address) return true
-        }
-        return false
     }
 }
