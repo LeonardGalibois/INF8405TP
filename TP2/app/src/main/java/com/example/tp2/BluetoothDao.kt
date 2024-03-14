@@ -1,8 +1,5 @@
 package com.example.tp2
 
-import android.bluetooth.BluetoothDevice
-import android.location.Location
-import android.net.MacAddress
 import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Database
@@ -10,11 +7,9 @@ import androidx.room.Delete
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.RoomDatabase
-import androidx.room.Update
 import com.google.android.gms.maps.model.Marker
 
 @Entity
