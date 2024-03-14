@@ -61,6 +61,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
     private var map: GoogleMap? = null
     private var currentLocation: Location? = null
 
+    private lateinit var userAdapter: UserAdapter
+    private var users: ArrayList<User> = ArrayList()
     var bluetoothDevices: ArrayList<BluetoothDeviceEntry> = ArrayList()
 
     // Permissions
@@ -75,14 +77,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         database = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "bluetoothDevices").allowMainThreadQueries().build()
         bluetoothDevices.addAll(database.bluetoothDao().getAll())
 
+        users.add(User("User 1"))
+        users.add(User("User 2"))
+        users.add(User("User 3"))
         val recyclerView: RecyclerView = findViewById(R.id.devices_list)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        userAdapter = UserAdapter(users)
         deviceAdapter = BluetoothDeviceAdapter(bluetoothDevices,
             { device -> showDeviceDetails(device) },
             { device -> toggleFavorite(device) }
         )
-        recyclerView.adapter = deviceAdapter
+        // TODO: Change to deviceAdapter once finished testing
+        recyclerView.adapter = userAdapter
 
         val themeButton: ToggleButton = findViewById(R.id.theme_button)
         themeButton.text = getString(R.string.swap_theme)
