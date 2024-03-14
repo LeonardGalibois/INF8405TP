@@ -8,11 +8,13 @@ import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Delete
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.RoomDatabase
+import com.google.android.gms.maps.model.Marker
 
 @Entity
 data class BluetoothDeviceEntry(
@@ -21,8 +23,13 @@ data class BluetoothDeviceEntry(
     @ColumnInfo(name = "Name") var name: String,
     @ColumnInfo(name = "Class") var majorClass: Int,
     @ColumnInfo(name = "Latitude") var latitude: Double?,
-    @ColumnInfo(name = "Longitude") var longitude: Double?
+    @ColumnInfo(name = "Longitude") var longitude: Double?,
+    @Ignore var marker: Marker? = null
 )
+{
+    constructor(macAddress: String, isFavorite: Boolean, name: String, majorClass: Int, latitude: Double?, longitude: Double?)
+            :this(macAddress,isFavorite,name,majorClass,latitude,longitude, null)
+}
 
 @Dao
 interface BluetoothDao {

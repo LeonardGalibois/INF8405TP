@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
@@ -52,6 +53,7 @@ private const val LOCATION_UPDATE_FREQUENCY_MS: Long = 1000
 
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, OnMarkerClickListener {
+    private lateinit var database: AppDatabase
     private lateinit var deviceAdapter: BluetoothDeviceAdapter
     private var bluetoothBroadcastReceiver: BroadcastReceiver? = null
     private var bluetoothScannerLauncher: BroadcastReceiver? = null
@@ -137,7 +139,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
                             currentLocation?.latitude,
                             currentLocation?.longitude
                         )
-                        addMarkerAtLocation(entry.name, entry.latitude, entry.longitude)
+                        entry.marker = addMarkerAtLocation(entry.name, entry.latitude, entry.longitude)
                         database.bluetoothDao().insertAll(entry)
 
                         if(bluetoothDevices.all { bluetoothDeviceEntry -> bluetoothDeviceEntry.macAddress != device.address  })
@@ -266,12 +268,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         map?.isMyLocationEnabled = true
         map?.uiSettings?.isMyLocationButtonEnabled = true
 
-        for (entry : BluetoothDeviceEntry in bluetoothDevices)
-        {
-            addMarkerAtLocation(entry.name, entry.latitude, entry.longitude)
-        }
         // Add marker clicked listener
         map?.setOnMarkerClickListener(this)
+
+        for (entry : BluetoothDeviceEntry in bluetoothDevices)
+        {
+            entry.marker = addMarkerAtLocation(entry.name, entry.latitude, entry.longitude)
+        }
     }
 
     override fun onLocationChanged(location: Location) {
@@ -281,7 +284,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         map?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude, location.longitude), DEFAULT_ZOOM.toFloat()))
     }
 
-    fun addMarkerAtLocation(title: String, latitude: Double?, longitude: Double?): Marker?
+
     override fun onMarkerClick(marker: Marker): Boolean {
         for (device in bluetoothDevices)
         {
@@ -294,7 +297,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         return false
     }
 
-    fun addMarkerAtLocation(title: String, location: Location?): Marker?
+    fun addMarkerAtLocation(title: String, latitude: Double?, longitude: Double?): Marker?
     {
         // Make sure there is a current location available
         if (latitude == null || longitude == null) return null
@@ -356,6 +359,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
 
     private fun toggleFavorite(entry: BluetoothDeviceEntry) {
         entry.isFavorite = !entry.isFavorite
+
         deviceAdapter.notifyDataSetChanged()
     }
 
