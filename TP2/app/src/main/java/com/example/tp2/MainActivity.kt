@@ -124,6 +124,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         val bluetoothManager: BluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         val bluetoothAdapter = bluetoothManager.adapter
 
+        // Get the information about a bluetooth device
         bluetoothBroadcastReceiver = object: BroadcastReceiver()
         {
             override fun onReceive(context: Context, intent: Intent) {
@@ -160,6 +161,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
             }
         }
 
+        // Relaunch the bluetooth scan
         bluetoothScannerLauncher = object: BroadcastReceiver()
         {
             override fun onReceive(context: Context, intent: Intent) {
