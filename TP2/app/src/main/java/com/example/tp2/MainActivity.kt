@@ -31,7 +31,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
@@ -79,11 +78,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         deviceAdapter = BluetoothDeviceAdapter(bluetoothDevices,
-            { device -> showDeviceDetails(device) },
-            { device -> toggleFavorite(device) }
+            { device -> showDeviceDetails(device) }
         )
         recyclerView.adapter = deviceAdapter
 
+        // Handle theme swap (light and dark modes)
         val themeButton: ToggleButton = findViewById(R.id.theme_button)
         themeButton.text = getString(R.string.swap_theme)
         themeButton.textOff = getString(R.string.swap_theme)
@@ -119,6 +118,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         initializeBluetooth()
     }
 
+    // Scan for Bluetooth devices
     private fun initializeBluetooth()
     {
         val bluetoothManager: BluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
@@ -181,6 +181,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         if(!bluetoothPermissionGranted) return
         bluetoothAdapter.startDiscovery()
     }
+
+    // Initialize Google Map
     private fun initializeMap()
     {
         Log.d("MainActivity", "Intializing Map")
@@ -198,6 +200,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         locationManager.requestLocationUpdates(LocationManager.FUSED_PROVIDER, LOCATION_UPDATE_FREQUENCY_MS, 0f, this)
     }
 
+    // Verify permissions for map
     private fun getLocationPermission()
     {
         if (ContextCompat.checkSelfPermission(this.applicationContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
@@ -210,6 +213,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         }
     }
 
+    // Verify permissions for Bluetooth
     @RequiresApi(Build.VERSION_CODES.S)
     private fun getBluetoothPermission()
     {
@@ -223,6 +227,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         }
     }
 
+    // Verify permissions for BluetoothConnect
     @RequiresApi(Build.VERSION_CODES.S)
     private fun getBluetoothConnectPermission()
     {
@@ -237,6 +242,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         }
     }
 
+    // Handle permission requests
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -266,6 +272,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         else super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
+    // Initialize map settings
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
 
@@ -287,6 +294,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         }
     }
 
+    // Move camera to current location on the map
     override fun onLocationChanged(location: Location) {
         // Snapping Google Maps' camera to the current location
         currentLocation = location
@@ -295,6 +303,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
     }
 
 
+    // Show device details and functionalities when clicking on a marker on the map
     override fun onMarkerClick(marker: Marker): Boolean {
         for (device in bluetoothDevices)
         {
@@ -307,6 +316,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         return false
     }
 
+    // Add marker for device on the map
     fun addMarkerAtLocation(title: String, latitude: Double?, longitude: Double?): Marker?
     {
         // Make sure there is a current location available
@@ -329,6 +339,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         return addMarkerAtLocation(title, currentLocation?.latitude, currentLocation?.longitude)
     }
 
+    // Show device details and features (favorite, share, GPS) when clicking on device
     private fun showDeviceDetails(entry: BluetoothDeviceEntry) {
         // TODO: Implement device details
         val deviceDetails = Dialog(this)
@@ -368,12 +379,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         return ""
     }
 
+    // Add or remove device from favorites
     private fun toggleFavorite(entry: BluetoothDeviceEntry) {
         entry.isFavorite = !entry.isFavorite
         database.bluetoothDao().updateFavorite(entry.macAddress, entry.isFavorite)
         deviceAdapter.notifyDataSetChanged()
     }
 
+    // Open menu to share device
     private fun shareDevice(device: BluetoothDeviceEntry) {
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "text/plain"
@@ -381,9 +394,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         startActivity(Intent.createChooser(intent, "Share Device Details"))
     }
 
+    // Assign text to Bluetooth major classes
     private fun getBluetoothClass(entry: BluetoothDeviceEntry) : String
     {
-        var result : String = ""
+        var result = ""
 
         when(entry.majorClass)
         {
@@ -403,6 +417,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         return result
     }
 
+    // Unregister Bluetooth broadcast receiver and scanner
     override fun onDestroy() {
         super.onDestroy()
 
