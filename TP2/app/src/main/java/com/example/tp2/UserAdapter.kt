@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class UserAdapter(private val users: ArrayList<User>): RecyclerView.Adapter<UserAdapter.ViewHolder>() {
+class UserAdapter(private val users: ArrayList<User>, private val onItemClick: (User) -> Unit): RecyclerView.Adapter<UserAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val username: TextView = itemView.findViewById(R.id.username)
@@ -19,6 +19,10 @@ class UserAdapter(private val users: ArrayList<User>): RecyclerView.Adapter<User
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val user = users[position]
         holder.username.text = user.username
+
+        holder.itemView.setOnClickListener {
+            onItemClick.invoke(user)
+        }
     }
 
     override fun getItemCount(): Int {

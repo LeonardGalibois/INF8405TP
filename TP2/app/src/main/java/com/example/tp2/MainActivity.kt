@@ -31,7 +31,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
@@ -77,13 +76,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         database = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "bluetoothDevices").allowMainThreadQueries().build()
         bluetoothDevices.addAll(database.bluetoothDao().getAll())
 
-        users.add(User("User 1"))
-        users.add(User("User 2"))
-        users.add(User("User 3"))
+        users.add(User("User 1", false))
+        users.add(User("User 2", false))
+        users.add(User("User 3", false))
         val recyclerView: RecyclerView = findViewById(R.id.devices_list)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        userAdapter = UserAdapter(users)
+        userAdapter = UserAdapter(users) { user -> showUserDetails(user) }
         deviceAdapter = BluetoothDeviceAdapter(bluetoothDevices,
             { device -> showDeviceDetails(device) },
             { device -> toggleFavorite(device) }
@@ -334,6 +333,36 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
     fun addMarkerAtLocation(title: String): Marker?
     {
         return addMarkerAtLocation(title, currentLocation?.latitude, currentLocation?.longitude)
+    }
+
+    private fun showUserDetails(user: User) {
+        val userDetails = Dialog(this)
+        userDetails.setContentView(R.layout.user_details)
+
+        val favoriteIcon = userDetails.findViewById<ImageView>(R.id.favorite_icon)
+        favoriteIcon.setOnClickListener {
+            toggleUserFavorite(user)
+            favoriteIcon.setImageResource(if (user.isFavorite) R.drawable.filled_star else R.drawable.empty_star)
+        }
+
+        val shareIcon = userDetails.findViewById<ImageView>(R.id.share_icon)
+        shareIcon.setOnClickListener {
+            shareUser(user)
+        }
+
+        userDetails.show()
+    }
+
+    private fun toggleUserFavorite(user: User) {
+        user.isFavorite = !user.isFavorite
+        userAdapter.notifyDataSetChanged()
+    }
+
+    private fun shareUser(user: User) {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "text/plain"
+        intent.putExtra(Intent.EXTRA_TEXT, "Check out this user: ${user.username}")
+        startActivity(Intent.createChooser(intent, "Share User Details"))
     }
 
     private fun showDeviceDetails(entry: BluetoothDeviceEntry) {
