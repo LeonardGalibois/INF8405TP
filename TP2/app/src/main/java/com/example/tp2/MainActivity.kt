@@ -357,15 +357,24 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         val deviceAddress: TextView = deviceDetails.findViewById(R.id.device_address)
         val deviceClass: TextView = deviceDetails.findViewById(R.id.device_class)
         val deviceLocation: TextView = deviceDetails.findViewById(R.id.device_location)
-        val pairedDevices: TextView = deviceDetails.findViewById(R.id.paired_devices)
         
         deviceName.text = "Name : " + entry.name
-        deviceAddress.text = "Mac Address : " + entry.macAddress
+        deviceAddress.text = "MAC Address : " + entry.macAddress
         deviceClass.text = "Class : " + getBluetoothClass(entry)
         deviceLocation.text = "Latitude : " + entry.latitude + "\nLongitude : " + entry.longitude
-        
-        val pairedDevicesInfo = getPairedDevicesInfo(entry)
-        pairedDevices.text = pairedDevicesInfo
+
+        val pairedDevices: TextView = deviceDetails.findViewById(R.id.paired_devices)
+        val pairedDevicesStringBuilder = StringBuilder()
+        for (otherDevice in bluetoothDevices) {
+            if (otherDevice != entry) {
+                pairedDevicesStringBuilder.append(
+                    "Name: ${otherDevice.name}\n" +
+                    "MAC Address: ${otherDevice.macAddress}\n" +
+                    "Class: ${otherDevice.majorClass}\n\n"
+                )
+            }
+        }
+        pairedDevices.text = pairedDevicesStringBuilder.toString()
 
         val favoriteIcon = deviceDetails.findViewById<ImageView>(R.id.favorite_icon)
         favoriteIcon.setImageResource(if (entry.isFavorite) R.drawable.filled_star else R.drawable.empty_star)
@@ -381,11 +390,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         }
 
         deviceDetails.show()
-    }
-
-    private fun getPairedDevicesInfo(device: BluetoothDeviceEntry): String {
-        // TODO: Implement paired devices info
-        return ""
     }
 
     // Add or remove device from favorites
