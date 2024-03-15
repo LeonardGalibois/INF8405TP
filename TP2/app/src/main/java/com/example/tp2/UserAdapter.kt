@@ -7,6 +7,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class UserAdapter(private val users: ArrayList<User>, private val onItemClick: (User) -> Unit): RecyclerView.Adapter<UserAdapter.ViewHolder>() {
+    val favoriteUsers = ArrayList<User>()
+    private var showOnlyFavorites = false
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val username: TextView = itemView.findViewById(R.id.username)
@@ -17,7 +19,7 @@ class UserAdapter(private val users: ArrayList<User>, private val onItemClick: (
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val user = users[position]
+        val user = if (showOnlyFavorites) favoriteUsers[position] else users[position]
         holder.username.text = user.username
 
         holder.itemView.setOnClickListener {
@@ -26,6 +28,11 @@ class UserAdapter(private val users: ArrayList<User>, private val onItemClick: (
     }
 
     override fun getItemCount(): Int {
-        return users.size
+        return if (showOnlyFavorites) favoriteUsers.size else users.size
+    }
+
+    fun toggleFavoritesOnly(showOnlyFavorites: Boolean) {
+        this.showOnlyFavorites = showOnlyFavorites
+        notifyDataSetChanged()
     }
 }

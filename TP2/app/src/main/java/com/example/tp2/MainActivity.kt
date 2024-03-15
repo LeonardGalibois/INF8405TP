@@ -76,16 +76,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         database = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "bluetoothDevices").allowMainThreadQueries().build()
         bluetoothDevices.addAll(database.bluetoothDao().getAll())
 
-        users.add(User("User 1", false))
-        users.add(User("User 2", false))
-        users.add(User("User 3", false))
+        users.add(User("User 1"))
+        users.add(User("User 2"))
+        users.add(User("User 3"))
         val recyclerView: RecyclerView = findViewById(R.id.devices_list)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         userAdapter = UserAdapter(users) { user -> showUserDetails(user) }
         deviceAdapter = BluetoothDeviceAdapter(bluetoothDevices,
-            { device -> showDeviceDetails(device) },
-            { device -> toggleFavorite(device) }
+            { device -> showDeviceDetails(device) }
         )
         // TODO: Change to deviceAdapter once finished testing
         recyclerView.adapter = userAdapter
@@ -114,6 +113,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
                 editor.putBoolean("dark", true)
             }
             editor.apply()
+        }
+
+        val toggleFavoritesButton: ToggleButton = findViewById(R.id.toggle_favorites_button)
+        toggleFavoritesButton.text = getString(R.string.favorites_off)
+        toggleFavoritesButton.textOff = getString(R.string.favorites_off)
+        toggleFavoritesButton.textOn = getString(R.string.favorites_on)
+        toggleFavoritesButton.setOnCheckedChangeListener { _, isChecked ->
+            userAdapter.toggleFavoritesOnly(isChecked)
         }
 
         getLocationPermission()
@@ -340,9 +347,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         userDetails.setContentView(R.layout.user_details)
 
         val favoriteIcon = userDetails.findViewById<ImageView>(R.id.favorite_icon)
+        favoriteIcon.setImageResource(if (user.isFavorite) R.drawable.filled_star else R.drawable.empty_star)
         favoriteIcon.setOnClickListener {
             toggleUserFavorite(user)
             favoriteIcon.setImageResource(if (user.isFavorite) R.drawable.filled_star else R.drawable.empty_star)
+            userAdapter.notifyDataSetChanged()
         }
 
         val shareIcon = userDetails.findViewById<ImageView>(R.id.share_icon)
@@ -355,7 +364,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
 
     private fun toggleUserFavorite(user: User) {
         user.isFavorite = !user.isFavorite
-        userAdapter.notifyDataSetChanged()
+        if (!userAdapter.favoriteUsers.contains(user)) {
+            userAdapter.favoriteUsers.add(user)
+        }
+        else {
+            userAdapter.favoriteUsers.remove(user)
+        }
     }
 
     private fun shareUser(user: User) {
