@@ -76,9 +76,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         database = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "bluetoothDevices").allowMainThreadQueries().build()
         bluetoothDevices.addAll(database.bluetoothDao().getAll())
 
-        users.add(User("User 1"))
-        users.add(User("User 2"))
-        users.add(User("User 3"))
+        users.add(User("User 1", "user1@test.com"))
+        users.add(User("User 2", "user2@test.com"))
+        users.add(User("User 3", "user3@test.com"))
         val recyclerView: RecyclerView = findViewById(R.id.devices_list)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -345,6 +345,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
     private fun showUserDetails(user: User) {
         val userDetails = Dialog(this)
         userDetails.setContentView(R.layout.user_details)
+
+        val otherUsersInfo = userDetails.findViewById<TextView>(R.id.others_info)
+        val otherUsersStringBuilder = StringBuilder()
+        for (otherUser in users) {
+            if (otherUser != user) {
+                otherUsersStringBuilder.append("Name: ${otherUser.username}\nEmail: ${otherUser.email}\n\n")
+            }
+        }
+        otherUsersInfo.text = otherUsersStringBuilder.toString()
 
         val favoriteIcon = userDetails.findViewById<ImageView>(R.id.favorite_icon)
         favoriteIcon.setImageResource(if (user.isFavorite) R.drawable.filled_star else R.drawable.empty_star)
