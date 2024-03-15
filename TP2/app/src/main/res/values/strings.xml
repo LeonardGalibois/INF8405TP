@@ -17,4 +17,7 @@
     <string name="device_location">Device location</string>
     <string name="device_class">Device class</string>
     <string name="paired_devices_info">Paired devices info</string>
+    <string name="toggle_favorites">Toggle favorites</string>
+    <string name="favorites_off">Favorites off</string>
+    <string name="favorites_on">Favorites on</string>
 </resources>

@@ -109,6 +109,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
             editor.apply()
         }
 
+        val toggleFavoritesButton: ToggleButton = findViewById(R.id.toggle_favorites_button)
+        toggleFavoritesButton.text = getString(R.string.favorites_off)
+        toggleFavoritesButton.textOff = getString(R.string.favorites_off)
+        toggleFavoritesButton.textOn = getString(R.string.favorites_on)
+        toggleFavoritesButton.setOnCheckedChangeListener { _, isChecked ->
+            deviceAdapter.toggleFavoritesOnly(isChecked)
+        }
+
         getLocationPermission()
         getBluetoothPermission()
         getBluetoothConnectPermission()
@@ -364,6 +372,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         favoriteIcon.setOnClickListener {
             toggleFavorite(entry)
             favoriteIcon.setImageResource(if (entry.isFavorite) R.drawable.filled_star else R.drawable.empty_star)
+            deviceAdapter.notifyDataSetChanged()
         }
 
         val shareIcon = deviceDetails.findViewById<ImageView>(R.id.share_icon)
@@ -382,8 +391,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
     // Add or remove device from favorites
     private fun toggleFavorite(entry: BluetoothDeviceEntry) {
         entry.isFavorite = !entry.isFavorite
+        if (!deviceAdapter.favoriteDevices.contains(entry)) {
+            deviceAdapter.favoriteDevices.add(entry)
+        }
+        else {
+            deviceAdapter.favoriteDevices.remove(entry)
+        }
         database.bluetoothDao().updateFavorite(entry.macAddress, entry.isFavorite)
-        deviceAdapter.notifyDataSetChanged()
     }
 
     // Open menu to share device

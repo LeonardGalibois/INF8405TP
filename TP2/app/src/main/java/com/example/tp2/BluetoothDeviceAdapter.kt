@@ -12,6 +12,8 @@ class BluetoothDeviceAdapter(
     private val onItemClick: (BluetoothDeviceEntry) -> Unit,
     var permissionGranted: Boolean = false
 ) : RecyclerView.Adapter<BluetoothDeviceAdapter.ViewHolder>() {
+    val favoriteDevices = ArrayList<BluetoothDeviceEntry>()
+    private var showOnlyFavorites = false
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val deviceName: TextView = itemView.findViewById(R.id.device_name)
@@ -26,7 +28,7 @@ class BluetoothDeviceAdapter(
 
     // Bind text elements to view holder
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val entry = devices[position]
+        val entry = if (showOnlyFavorites) favoriteDevices[position] else devices[position]
 
         if(permissionGranted)
         {
@@ -47,6 +49,11 @@ class BluetoothDeviceAdapter(
 
     // Get number of devices
     override fun getItemCount(): Int {
-        return devices.size
+        return if (showOnlyFavorites) favoriteDevices.size else devices.size
+    }
+
+    fun toggleFavoritesOnly(showOnlyFavorites: Boolean) {
+        this.showOnlyFavorites = showOnlyFavorites
+        notifyDataSetChanged()
     }
 }
