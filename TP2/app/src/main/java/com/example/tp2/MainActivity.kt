@@ -17,9 +17,11 @@ import android.graphics.BitmapFactory
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.ToggleButton
@@ -382,6 +384,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
             toggleFavorite(entry)
             favoriteIcon.setImageResource(if (entry.isFavorite) R.drawable.filled_star else R.drawable.empty_star)
             deviceAdapter.notifyDataSetChanged()
+        }
+
+        val itnBtn = deviceDetails.findViewById<Button>(R.id.itinerary_btn)
+        itnBtn.setOnClickListener {
+            val gmmIntentUri: Uri = Uri.parse("google.navigation:q=${currentLocation?.latitude},${currentLocation?.longitude}&mode=w")
+            val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+            mapIntent.setPackage("com.google.android.apps.maps")
+            startActivity(mapIntent)
+            deviceDetails.dismiss()
         }
 
         val shareIcon = deviceDetails.findViewById<ImageView>(R.id.share_icon)

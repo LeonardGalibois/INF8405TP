@@ -76,4 +76,17 @@
             android:textSize="20sp"/>
     </ScrollView>
 
+    <Button
+        android:id="@+id/itinerary_btn"
+        android:layout_width="127dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="87dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="87dp"
+        android:text="Comment y arriver"
+        android:textSize="8sp" />
+
 </RelativeLayout>
