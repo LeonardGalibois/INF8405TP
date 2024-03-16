@@ -266,6 +266,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
                 {
                     locationPermissionGranted = true
                     initializeLocationService()
+                    if (map != null) enableLocationOnMap()
                 }
                 PERMISSIONS_REQUEST_BLUETOOTH_SCAN ->
                 {
@@ -282,6 +283,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         else super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
+    fun enableLocationOnMap()
+    {
+        map?.isMyLocationEnabled = true
+        map?.uiSettings?.isMyLocationButtonEnabled = true
+    }
+
     // Initialize map settings
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
@@ -292,8 +299,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         // Prevents user from being able to move the map around
         map?.uiSettings?.isScrollGesturesEnabled = false
 
-        map?.isMyLocationEnabled = true
-        map?.uiSettings?.isMyLocationButtonEnabled = true
+        if (locationPermissionGranted)
+        {
+            enableLocationOnMap()
+        }
+
 
         // Add marker clicked listener
         map?.setOnMarkerClickListener(this)
