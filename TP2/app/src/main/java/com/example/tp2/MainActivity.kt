@@ -17,9 +17,11 @@ import android.graphics.BitmapFactory
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.ToggleButton
@@ -133,6 +135,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         toggleFavoritesButton.textOn = getString(R.string.favorites_on)
         toggleFavoritesButton.setOnCheckedChangeListener { _, isChecked ->
             userAdapter.toggleFavoritesOnly(isChecked)
+            deviceAdapter.toggleFavoritesOnly(isChecked)
         }
 
         getLocationPermission()
@@ -275,6 +278,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
                 {
                     locationPermissionGranted = true
                     initializeLocationService()
+                    if (map != null) enableLocationOnMap()
                 }
                 PERMISSIONS_REQUEST_BLUETOOTH_SCAN ->
                 {
@@ -291,6 +295,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         else super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
+
+    fun enableLocationOnMap()
+    {
+        map?.isMyLocationEnabled = true
+        map?.uiSettings?.isMyLocationButtonEnabled = true
+    }
+
+    // Initialize map settings
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
 
@@ -300,8 +312,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         // Prevents user from being able to move the map around
         map?.uiSettings?.isScrollGesturesEnabled = false
 
-        map?.isMyLocationEnabled = true
-        map?.uiSettings?.isMyLocationButtonEnabled = true
+        if (locationPermissionGranted)
+        {
+            enableLocationOnMap()
+        }
 
         // Add marker clicked listener
         map?.setOnMarkerClickListener(this)
@@ -409,21 +423,40 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         val deviceAddress: TextView = deviceDetails.findViewById(R.id.device_address)
         val deviceClass: TextView = deviceDetails.findViewById(R.id.device_class)
         val deviceLocation: TextView = deviceDetails.findViewById(R.id.device_location)
-        val pairedDevices: TextView = deviceDetails.findViewById(R.id.paired_devices)
         
         deviceName.text = "Name : " + entry.name
-        deviceAddress.text = "Mac Address : " + entry.macAddress
+        deviceAddress.text = "MAC Address : " + entry.macAddress
         deviceClass.text = "Class : " + getBluetoothClass(entry)
         deviceLocation.text = "Latitude : " + entry.latitude + "\nLongitude : " + entry.longitude
-        
-        val pairedDevicesInfo = getPairedDevicesInfo(entry)
-        pairedDevices.text = pairedDevicesInfo
+
+        val pairedDevices: TextView = deviceDetails.findViewById(R.id.paired_devices)
+        val pairedDevicesStringBuilder = StringBuilder()
+        for (otherDevice in bluetoothDevices) {
+            if (otherDevice != entry) {
+                pairedDevicesStringBuilder.append(
+                    "Name: ${otherDevice.name}\n" +
+                    "MAC Address: ${otherDevice.macAddress}\n" +
+                    "Class: ${otherDevice.majorClass}\n\n"
+                )
+            }
+        }
+        pairedDevices.text = pairedDevicesStringBuilder.toString()
 
         val favoriteIcon = deviceDetails.findViewById<ImageView>(R.id.favorite_icon)
         favoriteIcon.setImageResource(if (entry.isFavorite) R.drawable.filled_star else R.drawable.empty_star)
         favoriteIcon.setOnClickListener {
             toggleFavorite(entry)
             favoriteIcon.setImageResource(if (entry.isFavorite) R.drawable.filled_star else R.drawable.empty_star)
+            deviceAdapter.notifyDataSetChanged()
+        }
+
+        val itnBtn = deviceDetails.findViewById<Button>(R.id.itinerary_btn)
+        itnBtn.setOnClickListener {
+            val gmmIntentUri: Uri = Uri.parse("google.navigation:q=${currentLocation?.latitude},${currentLocation?.longitude}&mode=w")
+            val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+            mapIntent.setPackage("com.google.android.apps.maps")
+            startActivity(mapIntent)
+            deviceDetails.dismiss()
         }
 
         val shareIcon = deviceDetails.findViewById<ImageView>(R.id.share_icon)
@@ -434,15 +467,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         deviceDetails.show()
     }
 
-    private fun getPairedDevicesInfo(device: BluetoothDeviceEntry): String {
-        // TODO: Implement paired devices info
-        return ""
-    }
-
+    // Add or remove device from favorites
     private fun toggleFavorite(entry: BluetoothDeviceEntry) {
         entry.isFavorite = !entry.isFavorite
+        if (!deviceAdapter.favoriteDevices.contains(entry)) {
+            deviceAdapter.favoriteDevices.add(entry)
+        }
+        else {
+            deviceAdapter.favoriteDevices.remove(entry)
+        }
         database.bluetoothDao().updateFavorite(entry.macAddress, entry.isFavorite)
-        deviceAdapter.notifyDataSetChanged()
     }
 
     private fun shareDevice(device: BluetoothDeviceEntry) {
