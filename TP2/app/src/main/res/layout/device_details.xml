@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="300dp"
-    android:layout_height="500dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:layout_gravity="center">
 
     <ImageView
@@ -19,6 +19,15 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:src="@drawable/share_icon" />
+
+    <Button
+        android:id="@+id/itinerary_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/favorite_icon"
+        android:layout_toStartOf="@id/share_icon"
+        android:text="@string/comment_y_arriver"
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/device_name"
@@ -75,18 +84,5 @@
             android:text="@string/paired_devices_info"
             android:textSize="20sp"/>
     </ScrollView>
-
-    <Button
-        android:id="@+id/itinerary_btn"
-        android:layout_width="127dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="87dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="87dp"
-        android:text="Comment y arriver"
-        android:textSize="8sp" />
 
 </RelativeLayout>
