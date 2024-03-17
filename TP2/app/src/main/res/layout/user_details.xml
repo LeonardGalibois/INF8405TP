@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="300dp"
-    android:layout_height="500dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:layout_gravity="center">
 
     <ImageView
@@ -19,6 +19,15 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:src="@drawable/share_icon" />
+
+    <Button
+        android:id="@+id/itinerary_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/favorite_icon"
+        android:layout_toStartOf="@id/share_icon"
+        android:text="Comment y arriver"
+        android:textSize="12sp" />
 
     <ScrollView
         android:layout_width="match_parent"
