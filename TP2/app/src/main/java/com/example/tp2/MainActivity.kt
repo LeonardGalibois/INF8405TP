@@ -396,8 +396,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
             deviceAdapter.notifyDataSetChanged()
         }
 
-        val itnBtn = deviceDetails.findViewById<Button>(R.id.itinerary_btn)
-        itnBtn.setOnClickListener {
+        val itineraryButton = deviceDetails.findViewById<Button>(R.id.itinerary_btn)
+        itineraryButton.setOnClickListener {
             val gmmIntentUri: Uri = Uri.parse("google.navigation:q=${currentLocation?.latitude},${currentLocation?.longitude}&mode=w")
             val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
             mapIntent.setPackage("com.google.android.apps.maps")
