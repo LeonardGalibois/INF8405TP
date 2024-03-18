@@ -26,12 +26,12 @@
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/favorite_icon"
         android:layout_toStartOf="@id/share_icon"
-        android:text="Comment y arriver"
+        android:text="@string/comment_y_arriver"
         android:textSize="12sp" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/favorite_icon"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp">
