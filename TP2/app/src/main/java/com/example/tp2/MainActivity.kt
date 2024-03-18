@@ -119,9 +119,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
             deviceAdapter.toggleFavoritesOnly(isChecked)
         }
 
-        getLocationPermission()
-        getBluetoothPermission()
-        getBluetoothConnectPermission()
+        getPermission()
 
         initializeMap()
         initializeLocationService()
@@ -131,6 +129,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
     // Scan for Bluetooth devices
     private fun initializeBluetooth()
     {
+        if(!bluetoothPermissionGranted || !bluetoothConnectPermissionGranted) return
+
         val bluetoothManager: BluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         val bluetoothAdapter = bluetoothManager.adapter
 
@@ -210,47 +210,28 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         locationManager.requestLocationUpdates(LocationManager.FUSED_PROVIDER, LOCATION_UPDATE_FREQUENCY_MS, 0f, this)
     }
 
-    // Verify permissions for map
-    private fun getLocationPermission()
+    private fun getPermission()
     {
+
         if (ContextCompat.checkSelfPermission(this.applicationContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
         {
             locationPermissionGranted = true
         }
-        else
-        {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION)
-        }
-    }
 
-    // Verify permissions for Bluetooth
-    @RequiresApi(Build.VERSION_CODES.S)
-    private fun getBluetoothPermission()
-    {
         if (ContextCompat.checkSelfPermission(this.applicationContext, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED)
         {
             bluetoothPermissionGranted = true
         }
-        else
-        {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.BLUETOOTH_SCAN), PERMISSIONS_REQUEST_BLUETOOTH_SCAN)
-        }
-    }
 
-    // Verify permissions for BluetoothConnect
-    @RequiresApi(Build.VERSION_CODES.S)
-    private fun getBluetoothConnectPermission()
-    {
         if (ContextCompat.checkSelfPermission(this.applicationContext, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED)
         {
             bluetoothConnectPermissionGranted = true
             deviceAdapter.permissionGranted = true
         }
-        else
-        {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.BLUETOOTH_CONNECT), PERMISSIONS_REQUEST_BLUETOOTH_CONNECT)
-        }
+
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT), 0)
     }
+
 
     // Handle permission requests
     override fun onRequestPermissionsResult(
@@ -258,26 +239,25 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+        if (grantResults.isNotEmpty())
         {
-            when (requestCode)
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
             {
-                PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION    ->
-                {
-                    locationPermissionGranted = true
-                    initializeLocationService()
-                    if (map != null) enableLocationOnMap()
-                }
-                PERMISSIONS_REQUEST_BLUETOOTH_SCAN ->
-                {
-                    bluetoothPermissionGranted = true
-                    initializeBluetooth()
-                }
-                PERMISSIONS_REQUEST_BLUETOOTH_CONNECT ->
-                {
-                    bluetoothConnectPermissionGranted = true
-                    deviceAdapter.permissionGranted = true
-                }
+                locationPermissionGranted = true
+                initializeLocationService()
+                if (map != null) enableLocationOnMap()
+            }
+
+            if(grantResults[1] == PackageManager.PERMISSION_GRANTED)
+            {
+                bluetoothPermissionGranted = true
+                initializeBluetooth()
+            }
+
+            if(grantResults[1] == PackageManager.PERMISSION_GRANTED)
+            {
+                bluetoothConnectPermissionGranted = true
+                deviceAdapter.permissionGranted = true
             }
         }
         else super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -361,7 +341,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
 
     // Show device details and features (favorite, share, GPS) when clicking on device
     private fun showDeviceDetails(entry: BluetoothDeviceEntry) {
-        // TODO: Implement device details
         val deviceDetails = Dialog(this)
         deviceDetails.setContentView(R.layout.device_details)
 
@@ -454,7 +433,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
     override fun onDestroy() {
         super.onDestroy()
 
-        unregisterReceiver(bluetoothBroadcastReceiver)
-        unregisterReceiver(bluetoothScannerLauncher)
+        if (bluetoothBroadcastReceiver != null) unregisterReceiver(bluetoothBroadcastReceiver)
+        if (bluetoothScannerLauncher != null) unregisterReceiver(bluetoothScannerLauncher)
     }
 }
