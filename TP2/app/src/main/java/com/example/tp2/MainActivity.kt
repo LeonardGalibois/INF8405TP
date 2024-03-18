@@ -416,12 +416,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
     // Add or remove device from favorites
     private fun toggleFavorite(entry: BluetoothDeviceEntry) {
         entry.isFavorite = !entry.isFavorite
-        if (!deviceAdapter.favoriteDevices.contains(entry)) {
-            deviceAdapter.favoriteDevices.add(entry)
-        }
-        else {
-            deviceAdapter.favoriteDevices.remove(entry)
-        }
         database.bluetoothDao().updateFavorite(entry.macAddress, entry.isFavorite)
     }
 
