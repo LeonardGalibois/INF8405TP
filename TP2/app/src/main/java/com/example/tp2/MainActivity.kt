@@ -382,7 +382,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
                 pairedDevicesStringBuilder.append(
                     "Name: ${otherDevice.name}\n" +
                     "MAC Address: ${otherDevice.macAddress}\n" +
-                    "Class: ${otherDevice.majorClass}\n\n"
+                    "Class: ${getBluetoothClass(otherDevice)}\n\n"
                 )
             }
         }
