@@ -254,7 +254,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener, 
                 initializeBluetooth()
             }
 
-            if(grantResults[1] == PackageManager.PERMISSION_GRANTED)
+            if(grantResults[2] == PackageManager.PERMISSION_GRANTED)
             {
                 bluetoothConnectPermissionGranted = true
                 deviceAdapter.permissionGranted = true
