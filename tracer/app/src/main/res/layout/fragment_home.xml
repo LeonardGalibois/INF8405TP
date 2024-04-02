@@ -20,150 +20,173 @@
             app:layout_constraintBottom_toBottomOf="@id/map_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:layout_gravity="end"
-            android:padding="20dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/telemetry_background"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:layout_margin="10dp">
+            
+            <ImageButton
+                android:id="@+id/toggle_button"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/squared_button_background"
+                android:backgroundTint="@color/green"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:padding="15dp"
+                android:src="@drawable/start_icon"/>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="20dp"/>
 
             <LinearLayout
-                android:layout_weight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_gravity="end"
+                android:padding="20dp"
 
-                <ImageView
-                    android:layout_gravity="center_horizontal"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:scaleType="fitXY"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/speed_icon"/>
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:background="@drawable/telemetry_background">
 
-                <TextView
-                    android:id="@+id/speed_text_view"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textSize="30dp"
-                    android:textColor="@color/white"
-                    android:textAlignment="center"/>
-
-                <TextView
-                    android:layout_gravity="center_horizontal"
+                <LinearLayout
+                    android:layout_weight="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="m / s"
-                    android:textSize="20dp"
-                    android:textColor="@color/white"
-                    android:textAlignment="center"/>
+                    android:orientation="vertical">
 
-            </LinearLayout>
+                    <ImageView
+                        android:layout_gravity="center_horizontal"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:scaleType="fitXY"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/speed_icon"/>
 
-            <LinearLayout
-                android:layout_weight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/speed_text_view"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="30dp"
+                        android:textColor="@color/white"
+                        android:textAlignment="center"/>
 
-                <ImageView
-                    android:layout_gravity="center_horizontal"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:scaleType="fitXY"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/acceleration_icon"/>
+                    <TextView
+                        android:layout_gravity="center_horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="m / s"
+                        android:textSize="20dp"
+                        android:textColor="@color/white"
+                        android:textAlignment="center"/>
 
-                <TextView
-                    android:id="@+id/acceleration_text_view"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textSize="30dp"
-                    android:textColor="@color/white"
-                    android:textAlignment="center"/>
+                </LinearLayout>
 
-                <TextView
-                    android:layout_gravity="center_horizontal"
+                <LinearLayout
+                    android:layout_weight="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="m / s²"
-                    android:textSize="20dp"
-                    android:textColor="@color/white"
-                    android:textAlignment="center"/>
+                    android:orientation="vertical">
 
-            </LinearLayout>
+                    <ImageView
+                        android:layout_gravity="center_horizontal"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:scaleType="fitXY"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/acceleration_icon"/>
 
-            <LinearLayout
-                android:layout_weight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/acceleration_text_view"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="30dp"
+                        android:textColor="@color/white"
+                        android:textAlignment="center"/>
 
-                <ImageView
-                    android:layout_gravity="center_horizontal"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:scaleType="fitXY"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/step_icon"/>
+                    <TextView
+                        android:layout_gravity="center_horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="m / s²"
+                        android:textSize="20dp"
+                        android:textColor="@color/white"
+                        android:textAlignment="center"/>
 
-                <TextView
-                    android:id="@+id/steps_text_view"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textSize="30dp"
-                    android:textColor="@color/white"
-                    android:textAlignment="center"/>
+                </LinearLayout>
 
-                <TextView
-                    android:layout_gravity="center_horizontal"
+                <LinearLayout
+                    android:layout_weight="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Steps"
-                    android:textSize="20dp"
-                    android:textColor="@color/white"
-                    android:textAlignment="center"/>
+                    android:orientation="vertical">
 
-            </LinearLayout>
+                    <ImageView
+                        android:layout_gravity="center_horizontal"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:scaleType="fitXY"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/step_icon"/>
 
-            <LinearLayout
-                android:layout_weight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/steps_text_view"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="30dp"
+                        android:textColor="@color/white"
+                        android:textAlignment="center"/>
 
-                <ImageView
-                    android:layout_gravity="center_horizontal"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:scaleType="fitXY"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/temperature_icon"/>
+                    <TextView
+                        android:layout_gravity="center_horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Steps"
+                        android:textSize="20dp"
+                        android:textColor="@color/white"
+                        android:textAlignment="center"/>
 
-                <TextView
-                    android:id="@+id/temperature_text_view"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textSize="30dp"
-                    android:textColor="@color/white"
-                    android:textAlignment="center"/>
+                </LinearLayout>
 
-                <TextView
-                    android:layout_gravity="center_horizontal"
+                <LinearLayout
+                    android:layout_weight="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="°C"
-                    android:textSize="20dp"
-                    android:textColor="@color/white"
-                    android:textAlignment="center"/>
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_gravity="center_horizontal"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:scaleType="fitXY"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/temperature_icon"/>
+
+                    <TextView
+                        android:id="@+id/temperature_text_view"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="30dp"
+                        android:textColor="@color/white"
+                        android:textAlignment="center"/>
+
+                    <TextView
+                        android:layout_gravity="center_horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="°C"
+                        android:textSize="20dp"
+                        android:textColor="@color/white"
+                        android:textAlignment="center"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 
