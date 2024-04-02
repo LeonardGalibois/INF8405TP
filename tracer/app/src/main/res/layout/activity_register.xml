@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:text="Create Account"
             android:textAlignment="center"
-            android:textSize="30dp"/>
+            android:textSize="30sp"/>
 
         <Space
             android:layout_width="match_parent"
