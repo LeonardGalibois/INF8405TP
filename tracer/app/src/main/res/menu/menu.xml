@@ -13,8 +13,8 @@
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/account_fragment"
-        android:title="@string/nav_account"
+        android:id="@+id/sign_out_dialog"
+        android:title="@string/nav_sign_out"
         app:showAsAction="never"/>
 
 </menu>

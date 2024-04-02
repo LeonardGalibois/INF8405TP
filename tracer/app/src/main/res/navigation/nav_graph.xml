@@ -17,10 +17,8 @@
         android:label="@string/nav_history"
         tools:layout="@layout/fragment_history" />
 
-    <fragment
-        android:id="@+id/account_fragment"
-        android:name="com.example.tracer.AccountFragment"
-        android:label="@string/nav_account"
-        tools:layout="@layout/fragment_account" />
+    <dialog
+        android:id="@+id/sign_out_dialog"
+        android:name="com.example.tracer.SignOutFragment" />
 
 </navigation>
