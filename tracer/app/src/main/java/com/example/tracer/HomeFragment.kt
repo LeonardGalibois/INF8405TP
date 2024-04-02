@@ -34,6 +34,7 @@ class HomeFragment : Fragment(), SensorEventListener {
     private var totalSteps = 0f
     private var previousTotalSteps = 0f
     private lateinit var stepsTextView: TextView
+    private lateinit var speedTextView: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sensorManager = requireContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -47,6 +48,7 @@ class HomeFragment : Fragment(), SensorEventListener {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         stepsTextView = view.findViewById(R.id.steps_text_view)
+        speedTextView = view.findViewById(R.id.speed_text_view)
         resetSteps()
         return view
     }
@@ -87,20 +89,43 @@ class HomeFragment : Fragment(), SensorEventListener {
         super.onResume()
         walking = true
         val stepSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
-
         if (stepSensor == null) {
-            Toast.makeText(requireContext(), "No sensor detected on this device", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "No step sensor detected on this device", Toast.LENGTH_SHORT).show()
         }
         else {
             sensorManager?.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_UI)
         }
+
+        val accelerometerSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        if (accelerometerSensor == null) {
+            Toast.makeText(requireContext(), "No accelerometer sensor detected on this device", Toast.LENGTH_SHORT).show()
+        }
+        else {
+            sensorManager?.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        sensorManager?.unregisterListener(this)
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-        if (walking) {
-            totalSteps = event!!.values[0]
-            val currentSteps = totalSteps.toInt() - previousTotalSteps
-            stepsTextView.text = "$currentSteps"
+        when (event?.sensor?.type) {
+            Sensor.TYPE_STEP_COUNTER -> {
+                if (walking) {
+                    totalSteps = event.values[0]
+                    val currentSteps = totalSteps.toInt() - previousTotalSteps
+                    stepsTextView.text = "$currentSteps"
+                }
+            }
+            Sensor.TYPE_ACCELEROMETER -> {
+                val x = event.values[0]
+                val y = event.values[1]
+                val z = event.values[2]
+                val speed = calculateSpeed(x, y, z)
+                speedTextView.text = "$speed"
+            }
         }
     }
 
@@ -112,6 +137,10 @@ class HomeFragment : Fragment(), SensorEventListener {
         previousTotalSteps = totalSteps
         stepsTextView.text = "0"
         saveData()
+    }
+
+    private fun calculateSpeed(x: Float, y: Float, z: Float) {
+        // TODO: Implement speed algorithm
     }
 
     private fun saveData() {
