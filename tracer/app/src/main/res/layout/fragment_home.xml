@@ -37,9 +37,12 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:scaleType="fitXY"
+                    android:adjustViewBounds="true"
                     android:src="@drawable/speed_icon"/>
 
                 <TextView
+                    android:id="@+id/speed_text_view"
                     android:layout_gravity="center_horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -69,9 +72,12 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:scaleType="fitXY"
+                    android:adjustViewBounds="true"
                     android:src="@drawable/acceleration_icon"/>
 
                 <TextView
+                    android:id="@+id/acceleration_text_view"
                     android:layout_gravity="center_horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -101,9 +107,12 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:scaleType="fitXY"
+                    android:adjustViewBounds="true"
                     android:src="@drawable/step_icon"/>
 
                 <TextView
+                    android:id="@+id/steps_text_view"
                     android:layout_gravity="center_horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -133,9 +142,12 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:scaleType="fitXY"
+                    android:adjustViewBounds="true"
                     android:src="@drawable/temperature_icon"/>
 
                 <TextView
+                    android:id="@+id/temperature_text_view"
                     android:layout_gravity="center_horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
