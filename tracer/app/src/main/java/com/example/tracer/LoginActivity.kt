@@ -10,10 +10,10 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        var signUpButton : Button = findViewById<Button>(R.id.sign_up_button)
+        val signUpButton : Button = findViewById(R.id.sign_up_button)
         signUpButton.setOnClickListener { signUp() }
 
-        var loginButton: Button = findViewById<Button>(R.id.login_button)
+        val loginButton: Button = findViewById(R.id.login_button)
         loginButton.setOnClickListener { login() }
     }
 

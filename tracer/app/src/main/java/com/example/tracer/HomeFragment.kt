@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import androidx.core.content.ContextCompat
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -42,14 +43,14 @@ class HomeFragment : Fragment() {
         toggleButton.setOnClickListener {
             if (!isStarted)
             {
-                toggleButton.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.red))
-                toggleButton.setImageDrawable(resources.getDrawable(R.drawable.stop_icon))
+                toggleButton.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.red))
+                toggleButton.setImageResource(R.drawable.stop_icon)
                 start()
             }
             else
             {
-                toggleButton.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.green))
-                toggleButton.setImageDrawable(resources.getDrawable(R.drawable.start_icon))
+                toggleButton.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
+                toggleButton.setImageResource(R.drawable.start_icon)
                 stop()
             }
 
