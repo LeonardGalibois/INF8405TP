@@ -8,8 +8,9 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/devices_list"
-        android:layout_width="250dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_above="@id/theme_button"
         android:layout_below="@id/toggle_favorites_button"
         android:layout_alignParentEnd="true"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
