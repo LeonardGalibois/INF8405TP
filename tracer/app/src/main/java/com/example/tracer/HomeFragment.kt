@@ -27,14 +27,15 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class HomeFragment : Fragment(), SensorEventListener {
-    lateinit var toggleButton: ImageButton
-    var isStarted: Boolean = false
+    private lateinit var toggleButton: ImageButton
+    private var isStarted: Boolean = false
     private var sensorManager: SensorManager? = null
     private var walking = false
     private var totalSteps = 0f
     private var previousTotalSteps = 0f
     private lateinit var stepsTextView: TextView
     private lateinit var speedTextView: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sensorManager = requireContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -77,14 +78,17 @@ class HomeFragment : Fragment(), SensorEventListener {
         }
     }
 
+    // Start walking/running session
     private fun start() {
         onResume()
     }
 
+    // Stop walking/running session
     private fun stop() {
         resetSteps()
     }
 
+    // Listen to sensors if they are present on the device
     override fun onResume() {
         super.onResume()
         walking = true
@@ -105,11 +109,13 @@ class HomeFragment : Fragment(), SensorEventListener {
         }
     }
 
+    // Stop listening to the sensors when fragment is inactive
     override fun onPause() {
         super.onPause()
         sensorManager?.unregisterListener(this)
     }
 
+    // Update the values captured by the sensors
     override fun onSensorChanged(event: SensorEvent?) {
         when (event?.sensor?.type) {
             Sensor.TYPE_STEP_COUNTER -> {
@@ -133,6 +139,7 @@ class HomeFragment : Fragment(), SensorEventListener {
         TODO("Not yet implemented")
     }
 
+    // Reset the total number of steps
     private fun resetSteps() {
         previousTotalSteps = totalSteps
         stepsTextView.text = "0"
