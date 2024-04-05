@@ -35,6 +35,7 @@ class HomeFragment : Fragment(), SensorEventListener {
     private var previousTotalSteps = 0f
     private lateinit var stepsTextView: TextView
     private lateinit var speedTextView: TextView
+    private lateinit var accelerationTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +51,7 @@ class HomeFragment : Fragment(), SensorEventListener {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         stepsTextView = view.findViewById(R.id.steps_text_view)
         speedTextView = view.findViewById(R.id.speed_text_view)
+        accelerationTextView = view.findViewById(R.id.acceleration_text_view)
         resetSteps()
         return view
     }
@@ -131,6 +133,8 @@ class HomeFragment : Fragment(), SensorEventListener {
                 val z = event.values[2]
                 val speed = calculateSpeed(x, y, z)
                 speedTextView.text = "$speed"
+                val acceleration = calculateAcceleration(x, y, z)
+                accelerationTextView.text = "$acceleration"
             }
         }
     }
@@ -148,6 +152,10 @@ class HomeFragment : Fragment(), SensorEventListener {
 
     private fun calculateSpeed(x: Float, y: Float, z: Float) {
         // TODO: Implement speed algorithm
+    }
+
+    private fun calculateAcceleration(x: Float, y: Float, z: Float) {
+        // TODO: Implement acceleration algorithm
     }
 
     private fun saveData() {
