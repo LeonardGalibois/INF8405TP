@@ -1,32 +1,49 @@
 package com.example.tracer
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
+private const val DEFAULT_ZOOM = 20.0f
+private const val DEFAULT_WIDTH = 10.0f
+private const val LOCATION_UPDATE_FREQUENCY_MS: Long = 150
 /**
  * A simple [Fragment] subclass.
  * Use the [HomeFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class HomeFragment : Fragment(), SensorEventListener {
+class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEventListener {
     private lateinit var toggleButton: ImageButton
     private var isStarted: Boolean = false
     private var sensorManager: SensorManager? = null
@@ -36,6 +53,11 @@ class HomeFragment : Fragment(), SensorEventListener {
     private lateinit var stepsTextView: TextView
     private lateinit var speedTextView: TextView
     private lateinit var accelerationTextView: TextView
+
+    private var map: GoogleMap? = null
+    private var currentLocation: Location? = null
+    private var locations: MutableList<LatLng>? = null
+    private var polyline: Polyline? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,15 +100,23 @@ class HomeFragment : Fragment(), SensorEventListener {
 
             isStarted = !isStarted
         }
+
+        getPermision()
+        initializeMap()
+        initializeLocationService()
     }
 
     // Start walking/running session
     private fun start() {
+        locations = mutableListOf()
+        polyline = map?.addPolyline(PolylineOptions())
+        polyline?.width = DEFAULT_WIDTH
         onResume()
     }
 
     // Stop walking/running session
     private fun stop() {
+        map?.clear()
         resetSteps()
     }
 
@@ -185,5 +215,63 @@ class HomeFragment : Fragment(), SensorEventListener {
         fun newInstance(param1: String, param2: String) =
             HomeFragment().apply {
             }
+    }
+
+    private fun getPermision()
+    {
+        this.activity?.let { ActivityCompat.requestPermissions(it, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 0) }
+    }
+    private fun initializeMap()
+    {
+        if (map == null)
+        {
+            val mapFragment: SupportMapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
+
+            mapFragment.getMapAsync(this)
+        }
+    }
+
+    private fun initializeLocationService()
+    {
+        val locationManager: LocationManager = activity?.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
+        if (this.activity?.let {
+                ActivityCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            } != PackageManager.PERMISSION_GRANTED && this.activity?.let {
+                ActivityCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            } != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+        locationManager.requestLocationUpdates(LocationManager.FUSED_PROVIDER, LOCATION_UPDATE_FREQUENCY_MS, 0f, this)
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        map = googleMap
+
+        map?.uiSettings?.isScrollGesturesEnabled = false
+        map?.isMyLocationEnabled = true
+        map?.uiSettings?.isMyLocationButtonEnabled = true
+        map?.uiSettings?.isCompassEnabled = true
+        val position: LatLng = map?.cameraPosition?.target ?: LatLng(0.0,0.0)
+        map?.moveCamera(CameraUpdateFactory.newLatLngZoom(position, DEFAULT_ZOOM))
+
+    }
+    override fun onLocationChanged(location: Location) {
+        currentLocation = location
+        val position: LatLng = LatLng(location.latitude, location.longitude)
+        val zoomLevel: Float = map?.cameraPosition?.zoom ?: DEFAULT_ZOOM
+        map?.moveCamera(CameraUpdateFactory.newLatLngZoom(position, zoomLevel))
+
+        if(isStarted)
+        {
+            locations?.add(position)
+            polyline?.points = locations!!
+        }
     }
 }

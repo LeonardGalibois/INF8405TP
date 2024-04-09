@@ -17,6 +17,8 @@ class SignOutFragment : DialogFragment() {
 
     fun confirm()
     {
+        //TODO: Perform sign out logic
+
         val intent = Intent(activity, LoginActivity::class.java)
         startActivity(intent)
     }
