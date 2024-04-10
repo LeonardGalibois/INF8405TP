@@ -1,6 +1,7 @@
 package com.example.tracer
 
 import android.Manifest
+import android.util.Log
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.location.Location
@@ -12,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.getSystemService
@@ -22,6 +24,15 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.time.Duration
+import java.util.Timer
+import java.util.TimerTask
+import kotlin.time.TimeMark
+import kotlin.time.TimeSource
+import kotlin.time.DurationUnit
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -31,7 +42,8 @@ private const val ARG_PARAM2 = "param2"
 
 private const val DEFAULT_ZOOM = 20.0f
 private const val DEFAULT_WIDTH = 10.0f
-private const val LOCATION_UPDATE_FREQUENCY_MS: Long = 150
+private const val LOCATION_UPDATE_FREQUENCY_MS: Long = 100
+private const val WEATHER_UPDATE_FREQUENCY_MS: Long = 120000
 /**
  * A simple [Fragment] subclass.
  * Use the [HomeFragment.newInstance] factory method to
@@ -39,12 +51,19 @@ private const val LOCATION_UPDATE_FREQUENCY_MS: Long = 150
  */
 class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener {
     lateinit var toggleButton: ImageButton
+    lateinit var weatherTextView: TextView
+
     var isStarted: Boolean = false
+
+    private val weatherTimer: Timer = Timer("weather")
+    private var needToUpdateWeather: Boolean = false
 
     private var map: GoogleMap? = null
     private var currentLocation: Location? = null
-    private var locations: MutableList<LatLng>? = null
     private var polyline: Polyline? = null
+
+    private var locations: MutableList<LatLng>? = null
+    private var lastTemperature: Double = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +100,16 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener {
             isStarted = !isStarted
         }
 
+        weatherTextView = view.findViewById(R.id.temperature_text_view)
+
+        val task: TimerTask = object: TimerTask() {
+            override fun run() {
+                updateWeather(LatLng(currentLocation!!.latitude, currentLocation!!.longitude))
+            }
+        }
+
+        weatherTimer.schedule(task, 1000, WEATHER_UPDATE_FREQUENCY_MS)
+
         getPermision()
         initializeMap()
         initializeLocationService()
@@ -116,10 +145,36 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener {
             }
     }
 
+    private fun updateWeather(position: LatLng)
+    {
+        val callback: Callback<WeatherData> = object: Callback<WeatherData>
+        {
+            override fun onResponse(call: Call<WeatherData>, response: Response<WeatherData>) {
+                if(response.isSuccessful)
+                {
+                    lastTemperature = response.body()?.current?.temp ?: 0.0
+
+                    Log.w("UPDATE WEATHER" , "weather: " + lastTemperature)
+                    weatherTextView.text = lastTemperature.toString()
+                    weatherTextView.invalidate()
+                }
+            }
+
+            override fun onFailure(call: Call<WeatherData>, t: Throwable)
+            {
+                needToUpdateWeather = true
+                Log.w("Failed", t)
+            }
+        }
+
+        WeatherService.apiService.getCurrentWeatherData(position.latitude.toString(), position.longitude.toString())?.enqueue(callback)
+    }
+
     private fun getPermision()
     {
         this.activity?.let { ActivityCompat.requestPermissions(it, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 0) }
     }
+
     private fun initializeMap()
     {
         if (map == null)
@@ -159,7 +214,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener {
         map?.uiSettings?.isCompassEnabled = true
         val position: LatLng = map?.cameraPosition?.target ?: LatLng(0.0,0.0)
         map?.moveCamera(CameraUpdateFactory.newLatLngZoom(position, DEFAULT_ZOOM))
-
+        updateWeather(position)
     }
     override fun onLocationChanged(location: Location) {
         currentLocation = location
@@ -171,6 +226,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener {
         {
             locations?.add(position)
             polyline?.points = locations!!
+        }
+
+        if(needToUpdateWeather)
+        {
+            needToUpdateWeather = false
+            updateWeather(position)
         }
     }
 }
