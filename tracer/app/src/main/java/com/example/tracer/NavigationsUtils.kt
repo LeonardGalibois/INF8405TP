@@ -15,6 +15,7 @@ object NavigationUtils {
     fun startNewActivity(activity: Activity, activityClass: Class<*>) {
         // Create an Intent to start the new activity.
         val intent = Intent(activity, activityClass)
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         // Start the new activity.
         activity.startActivity(intent)
         activity.finish()
