@@ -17,6 +17,13 @@
         android:label="@string/nav_history"
         tools:layout="@layout/fragment_history" />
 
+    <fragment
+        android:id="@+id/history_view_fragment"
+        android:name="com.example.tracer.HistoryViewFragment"
+        android:label="@string/nav_history_view"
+        tools:layout="@layout/fragment_history_view" />
+
+
     <dialog
         android:id="@+id/sign_out_dialog"
         android:name="com.example.tracer.SignOutFragment" />
