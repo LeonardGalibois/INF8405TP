@@ -102,13 +102,22 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener {
 
         weatherTextView = view.findViewById(R.id.temperature_text_view)
 
-       /* val task: TimerTask = object: TimerTask() {
+        val task: TimerTask = object: TimerTask()
+        {
             override fun run() {
-                updateWeather(LatLng(currentLocation!!.latitude, currentLocation!!.longitude))
+                if(currentLocation != null)
+                {
+                    val position: LatLng = LatLng(currentLocation?.latitude!!, currentLocation?.longitude!!)
+                    updateWeather(position)
+                }
+                else
+                {
+                    needToUpdateWeather = true
+                }
             }
         }
 
-        weatherTimer.schedule(task, 1000, WEATHER_UPDATE_FREQUENCY_MS)*/
+        weatherTimer.schedule(task, 1000, WEATHER_UPDATE_FREQUENCY_MS)
 
         getPermision()
         initializeMap()
