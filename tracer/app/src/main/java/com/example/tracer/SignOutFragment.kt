@@ -10,9 +10,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import com.google.firebase.auth.FirebaseAuth
 
 
 class SignOutFragment : DialogFragment() {
+    lateinit var firebaseAuth: FirebaseAuth
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        firebaseAuth = FirebaseAuth.getInstance()
+    }
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
         AlertDialog.Builder(requireContext())
             .setMessage(getString(R.string.sign_out_message))
@@ -26,8 +33,7 @@ class SignOutFragment : DialogFragment() {
 
     fun confirm()
     {
-        //TODO: Perform sign out logic
-
+        firebaseAuth.signOut()
         val intent = Intent(getActivity(), LoginActivity::class.java)
         startActivity(intent)
     }
