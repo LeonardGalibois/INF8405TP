@@ -4,12 +4,17 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.Toast
 
 class RegisterActivity : AppCompatActivity() {
+    lateinit var authService: AuthService
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
+
+        authService = AuthService(this)
 
         var signInButton: Button = findViewById<Button>(R.id.sign_in_button)
         signInButton.setOnClickListener { signIn() }
@@ -30,13 +35,30 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun register() {
-        // TODO: Complete registration
+        val usernameInput = findViewById<EditText>(R.id.user_input).text.toString()
+        val passwordInput = findViewById<EditText>(R.id.password_input).text.toString()
 
-        // Lines below should only execute if registration is complete
-        finish()
-        val intent = Intent(this, MainActivity::class.java)
-        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-        startActivity(intent)
+        val emailValidationResult = ValidationUtils.validateEmail(usernameInput)
+        val passwordValidationResult = ValidationUtils.validatePassword(passwordInput)
+
+        when {
+            emailValidationResult != 0 -> {
+                // Afficher un message d'erreur pour un email invalide
+                Toast.makeText(this, "Adresse email invalide.", Toast.LENGTH_SHORT).show()
+            }
+            passwordValidationResult == ValidationUtils.ERROR_SHORT_PASSWORD -> {
+                // Afficher un message d'erreur pour un mot de passe trop court
+                Toast.makeText(this, "Le mot de passe doit contenir au moins 6 caractères.", Toast.LENGTH_SHORT).show()
+            }
+            passwordValidationResult == ValidationUtils.ERROR_INVALID_PASSWORD_FORMAT -> {
+                // Afficher un message d'erreur pour un format de mot de passe invalide
+                Toast.makeText(this, "Le mot de passe doit contenir uniquement des lettres et des chiffres.", Toast.LENGTH_SHORT).show()
+            }
+            else -> {
+                // Toutes les validations passent, procéder à l'inscription
+                authService.signUpUser(usernameInput, passwordInput)
+            }
+        }
     }
 
     private fun signIn() {
