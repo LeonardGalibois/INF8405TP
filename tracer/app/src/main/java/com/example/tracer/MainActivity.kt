@@ -87,9 +87,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun isLoggedIn(): Boolean {
-        // TODO: Verify if user has already logged in
-        return false;
+        val currentUser = firebaseAuth.currentUser
+        return currentUser != null
     }
+
 
     private fun login() {
         val intent = Intent(this, LoginActivity::class.java)
