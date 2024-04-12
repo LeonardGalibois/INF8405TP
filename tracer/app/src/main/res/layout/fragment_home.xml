@@ -16,6 +16,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+        <ImageView
+            android:id="@+id/compass_image"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/compass_icon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <LinearLayout
             app:layout_constraintBottom_toBottomOf="@id/map_fragment"
             android:layout_width="match_parent"
