@@ -268,7 +268,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
                     lastTemperature = response.body()?.current?.temp ?: 0.0
 
                     Log.w("UPDATE WEATHER" , "weather: " + lastTemperature)
-                    weatherTextView.text = lastTemperature.toString()
+                    weatherTextView.text = String.format("%.0f", lastTemperature)
                     weatherTextView.invalidate()
                 }
             }
