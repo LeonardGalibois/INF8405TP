@@ -156,22 +156,22 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
     // Listen to sensors if they are present on the device
     override fun onResume() {
         super.onResume()
-//        walking = true
-//        val stepSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
-//        if (stepSensor == null) {
-//            Toast.makeText(requireContext(), "No step sensor detected on this device", Toast.LENGTH_SHORT).show()
-//        }
-//        else {
-//            sensorManager?.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_UI)
-//        }
-//
-//        val accelerometerSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-//        if (accelerometerSensor == null) {
-//            Toast.makeText(requireContext(), "No accelerometer sensor detected on this device", Toast.LENGTH_SHORT).show()
-//        }
-//        else {
-//            sensorManager?.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL)
-//        }
+        walking = true
+        val stepSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+        if (stepSensor == null) {
+            Toast.makeText(requireContext(), "No step sensor detected on this device", Toast.LENGTH_SHORT).show()
+        }
+        else {
+            sensorManager?.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_UI)
+        }
+
+        val accelerometerSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        if (accelerometerSensor == null) {
+            Toast.makeText(requireContext(), "No accelerometer sensor detected on this device", Toast.LENGTH_SHORT).show()
+        }
+        else {
+            sensorManager?.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL)
+        }
     }
 
     // Stop listening to the sensors when fragment is inactive
@@ -186,7 +186,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
             Sensor.TYPE_STEP_COUNTER -> {
                 if (walking) {
                     totalSteps = event.values[0]
-                    val currentSteps = totalSteps.toInt() - previousTotalSteps
+                    val currentSteps = totalSteps.toInt() - previousTotalSteps.toInt()
                     stepsTextView.text = "$currentSteps"
                 }
             }
@@ -202,8 +202,9 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
         }
     }
 
+    // Not used, but must be implemented by SensorEventListener
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-        TODO("Not yet implemented")
+        return
     }
 
     // Reset the total number of steps
