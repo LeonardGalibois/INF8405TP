@@ -182,6 +182,9 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
 
     // Update the values captured by the sensors
     override fun onSensorChanged(event: SensorEvent?) {
+        if (!isStarted) {
+            return
+        }
         when (event?.sensor?.type) {
             Sensor.TYPE_STEP_COUNTER -> {
                 if (walking) {
