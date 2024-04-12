@@ -35,6 +35,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.Timer
 import java.util.TimerTask
+import kotlin.math.sqrt
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -88,7 +89,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
         stepsTextView = view.findViewById(R.id.steps_text_view)
         speedTextView = view.findViewById(R.id.speed_text_view)
         accelerationTextView = view.findViewById(R.id.acceleration_text_view)
-        resetSteps()
+        reset()
         return view
     }
 
@@ -150,7 +151,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
     // Stop walking/running session
     private fun stop() {
         map?.clear()
-        resetSteps()
+        reset()
     }
 
     // Listen to sensors if they are present on the device
@@ -196,11 +197,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
             Sensor.TYPE_ACCELEROMETER -> {
                 val x = event.values[0]
                 val y = event.values[1]
-                val z = event.values[2]
-                val speed = calculateSpeed(x, y, z)
-                speedTextView.text = "$speed"
-                val acceleration = calculateAcceleration(x, y, z)
-                accelerationTextView.text = "$acceleration"
+                val speed = currentLocation?.let { calculateSpeed(it) }
+                speedTextView.text = speed
+                val acceleration = calculateAcceleration(x, y)
+                accelerationTextView.text = acceleration
             }
         }
     }
@@ -210,19 +210,23 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
         return
     }
 
-    // Reset the total number of steps
-    private fun resetSteps() {
+    // Reset steps, speed and acceleration
+    private fun reset() {
         previousTotalSteps = totalSteps
         stepsTextView.text = "0"
+        speedTextView.text = "0"
+        accelerationTextView.text = "0"
         saveData()
     }
 
-    private fun calculateSpeed(x: Float, y: Float, z: Float) {
-        // TODO: Implement speed algorithm
+    // Calculate walking speed
+    private fun calculateSpeed(location: Location): String {
+        return "%.2f".format(location.speed)
     }
 
-    private fun calculateAcceleration(x: Float, y: Float, z: Float) {
-        // TODO: Implement acceleration algorithm
+    // Calculate walking acceleration
+    private fun calculateAcceleration(x: Float, y: Float): String {
+        return "%.2f".format(sqrt((x * x + y * y).toDouble()))
     }
 
     private fun saveData() {
