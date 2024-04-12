@@ -1,6 +1,5 @@
 package com.example.tracer
 
-import android.location.Location
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.maps.model.LatLng
 import java.io.Serializable

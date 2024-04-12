@@ -8,7 +8,7 @@ import android.widget.EditText
 import android.widget.Toast
 
 class LoginActivity : AppCompatActivity() {
-    lateinit var authService: AuthService
+    private lateinit var authService: AuthService
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)

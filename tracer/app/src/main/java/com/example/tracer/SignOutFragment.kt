@@ -9,7 +9,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 
 class SignOutFragment : DialogFragment() {
-    lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var firebaseAuth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -22,13 +22,13 @@ class SignOutFragment : DialogFragment() {
             .setNegativeButton(getString(R.string.sign_out_cancel)) { dialog, which -> cancel() }
             .create()
 
-    fun confirm()
+    private fun confirm()
     {
         val intent = Intent(activity, LoginActivity::class.java)
         startActivity(intent)
     }
 
-    fun cancel()
+    private fun cancel()
     {
 
     }

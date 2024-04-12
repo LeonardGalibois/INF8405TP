@@ -280,7 +280,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
             }
         }
 
-        WeatherService.apiService.getCurrentWeatherData(position.latitude.toString(), position.longitude.toString())?.enqueue(callback)
+        WeatherService.apiService.getCurrentWeatherData(position.latitude.toString(), position.longitude.toString()).enqueue(callback)
     }
 
     private fun getPermision()
@@ -331,7 +331,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
     }
     override fun onLocationChanged(location: Location) {
         currentLocation = location
-        val position: LatLng = LatLng(location.latitude, location.longitude)
+        val position = LatLng(location.latitude, location.longitude)
         val zoomLevel: Float = map?.cameraPosition?.zoom ?: DEFAULT_ZOOM
         map?.moveCamera(CameraUpdateFactory.newLatLngZoom(position, zoomLevel))
 

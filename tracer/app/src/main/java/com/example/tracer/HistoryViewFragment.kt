@@ -1,16 +1,13 @@
 package com.example.tracer
 
 import android.Manifest
-import android.location.Location
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ListView
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -34,7 +31,7 @@ private const val DEFAULT_WIDTH = 10.0f
  * create an instance of this fragment.
  */
 class HistoryViewFragment : Fragment(), OnMapReadyCallback {
-    val historyViewModel: HistoryViewModel by activityViewModels()
+    private val historyViewModel: HistoryViewModel by activityViewModels()
 
     private var map: GoogleMap? = null
     private var polyline: Polyline? = null

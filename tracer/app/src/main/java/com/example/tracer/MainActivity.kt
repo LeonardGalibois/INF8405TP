@@ -22,13 +22,13 @@ import com.google.firebase.database.FirebaseDatabase
 import com.squareup.picasso.Picasso
 
 class MainActivity : AppCompatActivity() {
-    lateinit var firebaseAuth: FirebaseAuth
-    lateinit var navController: NavController
-    lateinit var toolbar: Toolbar
-    lateinit var drawerLayout: DrawerLayout
-    lateinit var navigationView: NavigationView
-    lateinit var nav_drawer_username: TextView
-    lateinit var nav_drawer_profile_picture: ImageView
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var navController: NavController
+    private lateinit var toolbar: Toolbar
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navigationView: NavigationView
+    private lateinit var nav_drawer_username: TextView
+    private lateinit var nav_drawer_profile_picture: ImageView
     val historyViewModel: HistoryViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
                         .load(it)
                         .placeholder(R.mipmap.ic_launcher)
                         .error(R.mipmap.ic_launcher)
-                        .into(nav_drawer_profile_picture);
+                        .into(nav_drawer_profile_picture)
 
                 }
             }
