@@ -6,12 +6,14 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -28,6 +30,8 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.squareup.picasso.Picasso
 
 
 class MainActivity : AppCompatActivity() {
@@ -37,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var drawerLayout: DrawerLayout
     lateinit var navigationView: NavigationView
     lateinit var nav_drawer_username: TextView
+    lateinit var nav_drawer_profile_picture: ImageView
     val historyViewModel: HistoryViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,12 +64,26 @@ class MainActivity : AppCompatActivity() {
 
         val headerView = navigationView.getHeaderView(0)
         nav_drawer_username = headerView.findViewById(R.id.nav_drawer_username)
+        nav_drawer_profile_picture = headerView.findViewById(R.id.nav_drawer_profile_picture)
 
         val currentUser = firebaseAuth.currentUser
-        currentUser?.let {
-            nav_drawer_username.text = it.email
-        }
+        currentUser?.let { user ->
+            nav_drawer_username.text = user.email
+            val db = FirebaseDatabase.getInstance().reference
+            val userRef = db.child("users").child(user.uid)
 
+            userRef.child("profileImageUrl").get().addOnSuccessListener { dataSnapshot ->
+                val profileImageUrl = dataSnapshot.value as? String
+                profileImageUrl?.let {
+                    Picasso.get()
+                        .load(it)
+                        .placeholder(R.mipmap.ic_launcher)
+                        .error(R.mipmap.ic_launcher)
+                        .into(nav_drawer_profile_picture);
+
+                }
+            }
+        }
 
         // Navigation
         val appBarConfig = AppBarConfiguration(navController.graph, drawerLayout)
