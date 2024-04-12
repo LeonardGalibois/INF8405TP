@@ -1,22 +1,28 @@
 package com.example.tracer
 
 import android.Manifest
-import android.util.Log
+import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -27,13 +33,9 @@ import com.google.android.gms.maps.model.PolylineOptions
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.time.Duration
 import java.util.Timer
 import java.util.TimerTask
-import kotlin.time.TimeMark
-import kotlin.time.TimeSource
-import kotlin.time.DurationUnit
-
+import kotlin.math.sqrt
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -49,11 +51,18 @@ private const val WEATHER_UPDATE_FREQUENCY_MS: Long = 120000
  * Use the [HomeFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener {
-    lateinit var toggleButton: ImageButton
-    lateinit var weatherTextView: TextView
+class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEventListener {
+    private lateinit var toggleButton: ImageButton
+    private var isStarted: Boolean = false
+    private var sensorManager: SensorManager? = null
+    private var walking = false
+    private var totalSteps = 0f
+    private var previousTotalSteps = 0f
+    private lateinit var stepsTextView: TextView
+    private lateinit var speedTextView: TextView
+    private lateinit var accelerationTextView: TextView
 
-    var isStarted: Boolean = false
+    lateinit var weatherTextView: TextView
 
     private val weatherTimer: Timer = Timer("weather")
     private var needToUpdateWeather: Boolean = false
@@ -67,6 +76,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sensorManager = requireContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        loadData()
     }
 
     override fun onCreateView(
@@ -74,7 +85,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        val view = inflater.inflate(R.layout.fragment_home, container, false)
+        stepsTextView = view.findViewById(R.id.steps_text_view)
+        speedTextView = view.findViewById(R.id.speed_text_view)
+        accelerationTextView = view.findViewById(R.id.acceleration_text_view)
+        reset()
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -86,14 +102,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener {
         toggleButton.setOnClickListener {
             if (!isStarted)
             {
-                toggleButton.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.red))
-                toggleButton.setImageDrawable(resources.getDrawable(R.drawable.stop_icon))
+                toggleButton.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.red))
+                toggleButton.setImageResource(R.drawable.stop_icon)
                 start()
             }
             else
             {
-                toggleButton.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.green))
-                toggleButton.setImageDrawable(resources.getDrawable(R.drawable.start_icon))
+                toggleButton.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
+                toggleButton.setImageResource(R.drawable.start_icon)
                 stop()
             }
 
@@ -124,20 +140,108 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener {
         initializeLocationService()
     }
 
+    // Start walking/running session
     private fun start() {
         locations = mutableListOf()
         polyline = map?.addPolyline(PolylineOptions())
         polyline?.width = DEFAULT_WIDTH
+        onResume()
     }
 
+    // Stop walking/running session
     private fun stop() {
         map?.clear()
+        reset()
     }
 
+    // Listen to sensors if they are present on the device
     override fun onResume() {
         super.onResume()
+        walking = true
+        val stepSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+        if (stepSensor == null) {
+            Toast.makeText(requireContext(), "No step sensor detected on this device", Toast.LENGTH_SHORT).show()
+        }
+        else {
+            sensorManager?.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_UI)
+        }
 
+        val accelerometerSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        if (accelerometerSensor == null) {
+            Toast.makeText(requireContext(), "No accelerometer sensor detected on this device", Toast.LENGTH_SHORT).show()
+        }
+        else {
+            sensorManager?.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL)
+        }
     }
+
+    // Stop listening to the sensors when fragment is inactive
+    override fun onPause() {
+        super.onPause()
+        sensorManager?.unregisterListener(this)
+    }
+
+    // Update the values captured by the sensors
+    override fun onSensorChanged(event: SensorEvent?) {
+        if (!isStarted) {
+            return
+        }
+        when (event?.sensor?.type) {
+            Sensor.TYPE_STEP_COUNTER -> {
+                if (walking) {
+                    totalSteps = event.values[0]
+                    val currentSteps = totalSteps.toInt() - previousTotalSteps.toInt()
+                    stepsTextView.text = "$currentSteps"
+                }
+            }
+            Sensor.TYPE_ACCELEROMETER -> {
+                val x = event.values[0]
+                val y = event.values[1]
+                val speed = currentLocation?.let { calculateSpeed(it) }
+                speedTextView.text = speed
+                val acceleration = calculateAcceleration(x, y)
+                accelerationTextView.text = acceleration
+            }
+        }
+    }
+
+    // Not used, but must be implemented by SensorEventListener
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
+        return
+    }
+
+    // Reset steps, speed and acceleration
+    private fun reset() {
+        previousTotalSteps = totalSteps
+        stepsTextView.text = "0"
+        speedTextView.text = "0"
+        accelerationTextView.text = "0"
+        saveData()
+    }
+
+    // Calculate walking speed
+    private fun calculateSpeed(location: Location): String {
+        return "%.2f".format(location.speed)
+    }
+
+    // Calculate walking acceleration
+    private fun calculateAcceleration(x: Float, y: Float): String {
+        return "%.2f".format(sqrt((x * x + y * y).toDouble()))
+    }
+
+    private fun saveData() {
+        val sharedPreferences = requireContext().getSharedPreferences("preferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putFloat("steps", previousTotalSteps)
+        editor.apply()
+    }
+
+    private fun loadData() {
+        val sharedPreferences = requireContext().getSharedPreferences("preferences", Context.MODE_PRIVATE)
+        val savedSteps = sharedPreferences.getFloat("steps", 0f)
+        previousTotalSteps = savedSteps
+    }
+
     companion object {
         /**
          * Use this factory method to create a new instance of

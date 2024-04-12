@@ -24,22 +24,21 @@ import java.util.Locale
 
 class RegisterActivity : AppCompatActivity() {
     lateinit var authService: AuthService
-    private lateinit var profilePictureButton :ImageButton
+    private lateinit var profilePictureButton: ImageButton
     private var currentPhotoPath: String? = null
     private var capturedImageBitmap: Bitmap? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
+        val signInButton: Button = findViewById(R.id.sign_in_button)
         authService = AuthService(this)
-
-        var signInButton: Button = findViewById<Button>(R.id.sign_in_button)
         signInButton.setOnClickListener { signIn() }
 
-        var registerButton: Button = findViewById<Button>(R.id.register_button)
+        val registerButton: Button = findViewById(R.id.register_button)
         registerButton.setOnClickListener { register() }
 
-        profilePictureButton = findViewById<ImageButton>(R.id.profile_picture_button)
+        profilePictureButton = findViewById(R.id.profile_picture_button)
         profilePictureButton.setOnClickListener { selectProfilePicture() }
     }
 

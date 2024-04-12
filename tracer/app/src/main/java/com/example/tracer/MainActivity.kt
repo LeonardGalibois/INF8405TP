@@ -1,38 +1,25 @@
 package com.example.tracer
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
-import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
-import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.app.ActivityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.squareup.picasso.Picasso
-
 
 class MainActivity : AppCompatActivity() {
     lateinit var firebaseAuth: FirebaseAuth
@@ -53,7 +40,6 @@ class MainActivity : AppCompatActivity() {
         {
             login()
         }
-
 
         // Variables
         toolbar = findViewById(R.id.toolbar)
@@ -95,13 +81,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.menu, menu)
-
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
     }
 
@@ -109,7 +92,6 @@ class MainActivity : AppCompatActivity() {
         val currentUser = firebaseAuth.currentUser
         return currentUser != null
     }
-
 
     private fun login() {
         val intent = Intent(this, LoginActivity::class.java)
