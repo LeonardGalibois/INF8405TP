@@ -240,11 +240,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
         return "%.2f".format(location.speed)
     }
 
-    // Calculate walking acceleration
-    private fun calculateAcceleration(x: Float, y: Float): String {
-        return "%.2f".format(sqrt((x * x + y * y).toDouble()))
-    }
-
     private fun saveData() {
         val sharedPreferences = requireContext().getSharedPreferences("preferences", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
