@@ -77,8 +77,8 @@ class MainActivity : AppCompatActivity() {
                         profileImageUrl?.let {
                             Picasso.get()
                                 .load(it)
-                                .placeholder(R.mipmap.ic_launcher)
-                                .error(R.mipmap.ic_launcher)
+                                .error( com.google.android.material.R.drawable.mtrl_ic_error )
+                                .placeholder( R.drawable.progress_animation )
                                 .into(nav_drawer_profile_picture)
 
                         }
