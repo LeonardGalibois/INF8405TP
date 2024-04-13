@@ -35,6 +35,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.Timer
 import java.util.TimerTask
+import kotlin.math.pow
 import kotlin.math.sqrt
 
 // TODO: Rename parameter arguments, choose names that match
@@ -61,6 +62,9 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
     private lateinit var stepsTextView: TextView
     private lateinit var speedTextView: TextView
     private lateinit var accelerationTextView: TextView
+
+    private var gravity = FloatArray(3)
+    private var linearAcceleration = FloatArray(3)
 
     lateinit var weatherTextView: TextView
 
@@ -198,8 +202,21 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
                 val y = event.values[1]
                 val speed = currentLocation?.let { calculateSpeed(it) }
                 speedTextView.text = speed
-                val acceleration = calculateAcceleration(x, y)
-                accelerationTextView.text = acceleration
+
+                val alpha = 0.8f
+
+                // Isolate the force of gravity with the low-pass filter.
+                gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0]
+                gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1]
+                gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2]
+
+                // Remove the gravity contribution with the high-pass filter.
+                linearAcceleration[0] = event.values[0] - gravity[0]
+                linearAcceleration[1] = event.values[1] - gravity[1]
+                linearAcceleration[2] = event.values[2] - gravity[2]
+
+                val acceleration = sqrt(linearAcceleration[0].pow(2) + linearAcceleration[1].pow(2) + linearAcceleration[2].pow(2))
+                accelerationTextView.text = String.format("%.2f", acceleration)
             }
         }
     }
@@ -221,11 +238,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
     // Calculate walking speed
     private fun calculateSpeed(location: Location): String {
         return "%.2f".format(location.speed)
-    }
-
-    // Calculate walking acceleration
-    private fun calculateAcceleration(x: Float, y: Float): String {
-        return "%.2f".format(sqrt((x * x + y * y).toDouble()))
     }
 
     private fun saveData() {
