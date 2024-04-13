@@ -198,8 +198,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
             }
             Sensor.TYPE_ACCELEROMETER -> {
                 if (!isStarted) return
-                val x = event.values[0]
-                val y = event.values[1]
                 val speed = currentLocation?.let { calculateSpeed(it) }
                 speedTextView.text = speed
 
@@ -215,6 +213,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
                 linearAcceleration[1] = event.values[1] - gravity[1]
                 linearAcceleration[2] = event.values[2] - gravity[2]
 
+                // Calculate acceleration module
                 val acceleration = sqrt(linearAcceleration[0].pow(2) + linearAcceleration[1].pow(2) + linearAcceleration[2].pow(2))
                 accelerationTextView.text = String.format("%.2f", acceleration)
             }
