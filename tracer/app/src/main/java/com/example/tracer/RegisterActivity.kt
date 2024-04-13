@@ -130,16 +130,19 @@ class RegisterActivity : AppCompatActivity() {
                 // Afficher un message d'erreur pour un format de mot de passe invalide
                 Toast.makeText(this, "Le mot de passe doit contenir uniquement des lettres et des chiffres.", Toast.LENGTH_SHORT).show()
             }
+            capturedImageBitmap == null -> {
+                // Afficher un message d'erreur indiquant que l'utilisateur doit sélectionner une photo de profil
+                Toast.makeText(this, "Veuillez sélectionner une photo de profil.", Toast.LENGTH_SHORT).show()
+            }
             else -> {
-                // Toutes les validations passent, procéder à l'inscription
+                // Toutes les validations passent et une photo de profil a été sélectionnée, procéder à l'inscription
                 capturedImageBitmap?.let {
-                    authService.signUpUser(usernameInput, passwordInput,
-                        it
-                    )
+                    authService.signUpUser(usernameInput, passwordInput, it)
                 }
             }
         }
     }
+
 
     private fun signIn() {
         val intent = Intent(this, LoginActivity::class.java)
