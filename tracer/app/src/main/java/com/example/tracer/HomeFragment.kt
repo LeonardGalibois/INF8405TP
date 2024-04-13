@@ -17,7 +17,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -63,8 +62,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
     private lateinit var speedTextView: TextView
     private lateinit var accelerationTextView: TextView
 
-    private lateinit var compassImage: ImageView
-
     lateinit var weatherTextView: TextView
 
     private val weatherTimer: Timer = Timer("weather")
@@ -92,7 +89,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
         stepsTextView = view.findViewById(R.id.steps_text_view)
         speedTextView = view.findViewById(R.id.speed_text_view)
         accelerationTextView = view.findViewById(R.id.acceleration_text_view)
-        compassImage = view.findViewById(R.id.compass_image)
         reset()
         return view
     }
@@ -177,14 +173,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
         else {
             sensorManager?.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL)
         }
-
-        val gyroscopeSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
-        if (gyroscopeSensor == null) {
-            Toast.makeText(requireContext(), "No gyroscope sensor detected on this device", Toast.LENGTH_SHORT).show()
-        }
-        else {
-            sensorManager?.registerListener(this, gyroscopeSensor, SensorManager.SENSOR_DELAY_UI)
-        }
     }
 
     // Stop listening to the sensors when fragment is inactive
@@ -196,9 +184,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
     // Update the values captured by the sensors
     override fun onSensorChanged(event: SensorEvent?) {
         when (event?.sensor?.type) {
-            Sensor.TYPE_GYROSCOPE -> {
-                // TODO: Handle gyroscope logic
-            }
             Sensor.TYPE_STEP_COUNTER -> {
                 if (!isStarted) return
                 if (walking) {
