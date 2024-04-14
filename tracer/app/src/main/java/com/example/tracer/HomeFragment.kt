@@ -158,16 +158,24 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
 
     // Stop walking/running session
     private fun stop() {
+
+        val locationsData : MutableList<LatLngData> = mutableListOf()
+
+        if(locations != null)
+        {
+            for(location in locations!!)
+            {
+                locationsData.add(LatLngData(location.latitude, location.longitude))
+            }
+        }
+
         val hike = Hike(
             Date(),
-            listOf(
-                LatLngData(-34.399, 150.646),
-                LatLngData(-34.395, 150.642)
-            ),
-            10.0f,
-            1.2f,
-            500,
-            12.1f
+            locationsData,
+            speedTextView.text.toString().toFloat(),
+            accelerationTextView.text.toString().toFloat(),
+            totalSteps.toInt(),
+            lastTemperature.toFloat()
         )
 
         historyViewModel.addHikeToDatabase(hike)

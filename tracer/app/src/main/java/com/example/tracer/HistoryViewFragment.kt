@@ -39,8 +39,6 @@ class HistoryViewFragment : Fragment(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
     }
 
     override fun onCreateView(
@@ -57,11 +55,11 @@ class HistoryViewFragment : Fragment(), OnMapReadyCallback {
         getPermision()
         initializeMap()
 
+        historyViewModel.fetchHistory()
+
         val index: Int? = arguments?.getInt("Index")
 
         if (index != null) displayHike(historyViewModel.history[index])
-
-
     }
 
     private fun displayHike(hike: Hike)
