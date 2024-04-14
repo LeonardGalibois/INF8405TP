@@ -51,7 +51,7 @@ class HistoryViewModel : ViewModel() {
     }
 
     fun addHikeToDatabase(hike: Hike) {
-        val hikesRef = FirebaseDatabase.getInstance().getReference("hikes")
+        hikesRef.keepSynced(true);
         val newHikeRef = hikesRef.push()
 
         // Obtenir l'ID de l'utilisateur actuel à partir de Firebase Auth

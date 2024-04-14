@@ -168,11 +168,18 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
                 locationsData.add(LatLngData(location.latitude, location.longitude))
             }
         }
+        val speedText = speedTextView.text.toString()
+        val speed = if (speedText.isNotEmpty()) {
+            speedText.toFloat()
+        } else {
+            0.0f
+        }
+
 
         val hike = Hike(
             Date(),
             locationsData,
-            speedTextView.text.toString().toFloat(),
+            speed,
             accelerationTextView.text.toString().toFloat(),
             (totalSteps - previousTotalSteps).toInt(),
             lastTemperature.toFloat()
