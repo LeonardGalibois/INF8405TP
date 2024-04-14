@@ -1,13 +1,32 @@
 <resources>
     <string name="app_name">Tracer</string>
+
+    <!--    Nav    -->
     <string name="nav_open">Open</string>
     <string name="nav_close">Close</string>
     <string name="nav_sign_out">Sign out</string>
     <string name="nav_home">Home</string>
     <string name="nav_history">History</string>
     <string name="nav_history_view">History View</string>
+
+    <!--    Sign out    -->
     <string name="sign_out_message">Are you sure you want to sign out?</string>
     <string name="sign_out_ok">sign out</string>
     <string name="sign_out_cancel">cancel</string>
+
+    <!--    Authentication    -->
+    <string name="login">Login</string>
+    <string name="user_placeholder">User</string>
+    <string name="password_placeholder">Password</string>
+    <string name="sign_up">Sign up</string>
+    <string name="sign_in">Sign in</string>
+    <string name="register">Register</string>
+    <string name="create_account">Create Account</string>
+
+    <!--    Measurement units    -->
+    <string name="speed_units">m / s</string>
+    <string name="acceleration_units">m / s²</string>
+    <string name="steps">Steps</string>
+    <string name="temperature_units">°C</string>
 
 </resources>

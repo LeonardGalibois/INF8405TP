@@ -9,12 +9,9 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import java.io.Serializable
 import java.util.Date
 
-data class LatLngData(val latitude: Double = 0.0, val longitude: Double = 0.0) {
-    constructor() : this(0.0, 0.0)
-}
+data class LatLngData(val latitude: Double = 0.0, val longitude: Double = 0.0)
 
 data class Hike(
     var date: Date? = null,

@@ -19,7 +19,6 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -41,11 +40,6 @@ import java.util.TimerTask
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
 private const val DEFAULT_ZOOM = 20.0f
 private const val DEFAULT_WIDTH = 10.0f
 private const val LOCATION_UPDATE_FREQUENCY_MS: Long = 100
@@ -65,7 +59,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
     private lateinit var stepsTextView: TextView
     private lateinit var speedTextView: TextView
     private lateinit var accelerationTextView: TextView
-    val historyViewModel: HistoryViewModel by viewModels()
+    private val historyViewModel: HistoryViewModel by viewModels()
 
     private var gravity = FloatArray(3)
     private var linearAcceleration = FloatArray(3)
@@ -131,7 +125,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
             override fun run() {
                 if(currentLocation != null)
                 {
-                    val position: LatLng = LatLng(currentLocation?.latitude!!, currentLocation?.longitude!!)
+                    val position = LatLng(currentLocation?.latitude!!, currentLocation?.longitude!!)
                     updateWeather(position)
                 }
                 else
@@ -309,7 +303,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
                 {
                     lastTemperature = response.body()?.current?.temp ?: 0.0
 
-                    Log.w("UPDATE WEATHER" , "weather: " + lastTemperature)
+                    Log.w("UPDATE WEATHER" , "weather: $lastTemperature")
                     weatherTextView.text = String.format("%.0f", lastTemperature)
                     weatherTextView.invalidate()
                 }

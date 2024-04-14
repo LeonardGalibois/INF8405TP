@@ -17,7 +17,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Login"
+            android:text="@string/login"
             android:textAlignment="center"
             android:textSize="30sp"/>
 
@@ -30,7 +30,7 @@
             android:id="@+id/user_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="User" />
+            android:hint="@string/user_placeholder" />
 
         <Space
             android:layout_width="match_parent"
@@ -41,7 +41,7 @@
             android:id="@+id/password_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
+            android:hint="@string/password_placeholder"
             android:inputType="textPassword"/>
 
         <Space
@@ -59,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:background="@color/transparent"
-                android:text="Sign up"
+                android:text="@string/sign_up"
                 android:textColor="@color/black"/>
 
             <Space
@@ -72,7 +72,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
-                android:text="Login"/>
+                android:text="@string/login"/>
 
         </LinearLayout>
 
