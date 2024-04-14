@@ -17,11 +17,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
 private const val DEFAULT_ZOOM = 20.0f
 private const val DEFAULT_WIDTH = 10.0f
 
@@ -116,7 +111,7 @@ class HistoryViewFragment : Fragment(), OnMapReadyCallback {
         map?.clear()
         polyline = map?.addPolyline(PolylineOptions())
         polyline?.width = DEFAULT_WIDTH
-        polyline?.points = locations?: listOf(LatLng(0.0,0.0))
-        map?.moveCamera(CameraUpdateFactory.newLatLngZoom(locations?.get(0) ?:LatLng(0.0,0.0), DEFAULT_ZOOM))
+        polyline?.points = locations
+        map?.moveCamera(CameraUpdateFactory.newLatLngZoom(locations[0], DEFAULT_ZOOM))
     }
 }

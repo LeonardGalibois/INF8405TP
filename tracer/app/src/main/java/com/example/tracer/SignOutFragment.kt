@@ -24,7 +24,7 @@ class SignOutFragment : DialogFragment() {
 
     private fun confirm()
     {
-        firebaseAuth.signOut();
+        firebaseAuth.signOut()
         val intent = Intent(activity, LoginActivity::class.java)
         startActivity(intent)
     }
