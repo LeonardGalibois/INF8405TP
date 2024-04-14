@@ -174,7 +174,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
             locationsData,
             speedTextView.text.toString().toFloat(),
             accelerationTextView.text.toString().toFloat(),
-            totalSteps.toInt(),
+            (totalSteps - previousTotalSteps).toInt(),
             lastTemperature.toFloat()
         )
 
