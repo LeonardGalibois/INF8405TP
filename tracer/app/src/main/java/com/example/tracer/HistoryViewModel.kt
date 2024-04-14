@@ -36,7 +36,10 @@ class HistoryViewModel : ViewModel() {
             history.clear()
             for (hikeSnapshot in snapshot.children) {
                 val hike = hikeSnapshot.getValue(Hike::class.java)
-                hike?.let { history.add(it) }
+                val userId = FirebaseAuth.getInstance().currentUser?.uid
+                if (hike?.userId == userId) {
+                    hike?.let { history.add(it) }
+                }
             }
             // Notifier les observateurs que les données ont changé
             // Utilisation de LiveData ou d'autres méthodes de notification ici
