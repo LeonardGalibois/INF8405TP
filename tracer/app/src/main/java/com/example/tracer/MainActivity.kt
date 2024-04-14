@@ -88,6 +88,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
+                historyViewModel.fetchHistory()
             }
 
             override fun onDrawerClosed(drawerView: View) {
