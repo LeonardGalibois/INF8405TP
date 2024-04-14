@@ -200,7 +200,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
             Toast.makeText(requireContext(), "No accelerometer sensor detected on this device", Toast.LENGTH_SHORT).show()
         }
         else {
-            sensorManager?.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL)
+            sensorManager?.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_UI)
         }
     }
 
@@ -320,7 +320,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
 
     private fun getPermision()
     {
-        this.activity?.let { ActivityCompat.requestPermissions(it, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 0) }
+        this.activity?.let { ActivityCompat.requestPermissions(it, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACTIVITY_RECOGNITION, Manifest.permission.BODY_SENSORS), 0) }
     }
 
     private fun initializeMap()
