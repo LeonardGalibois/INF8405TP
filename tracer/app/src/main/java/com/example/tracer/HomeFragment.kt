@@ -357,6 +357,20 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
         map = googleMap
 
         map?.uiSettings?.isScrollGesturesEnabled = false
+        if (this.activity?.let {
+                ActivityCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            } != PackageManager.PERMISSION_GRANTED && this.activity?.let {
+                ActivityCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            } != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
         map?.isMyLocationEnabled = true
         map?.uiSettings?.isMyLocationButtonEnabled = true
         map?.uiSettings?.isCompassEnabled = true
