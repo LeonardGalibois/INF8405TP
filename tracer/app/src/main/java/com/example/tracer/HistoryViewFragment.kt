@@ -35,7 +35,7 @@ class HistoryViewFragment : Fragment(), OnMapReadyCallback {
 
     private var map: GoogleMap? = null
     private var polyline: Polyline? = null
-    private var locations: MutableList<LatLng>? = null
+    private var locations: MutableList<LatLng> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,9 +82,15 @@ class HistoryViewFragment : Fragment(), OnMapReadyCallback {
         map?.clear()
         polyline = map?.addPolyline(PolylineOptions())
         polyline?.width = DEFAULT_WIDTH
-        polyline?.points = hike.locations.toMutableList()
-        map?.moveCamera(CameraUpdateFactory.newLatLngZoom(hike.locations[0], DEFAULT_ZOOM))
-        locations = hike.locations.toMutableList()
+
+        locations = mutableListOf()
+        for(location in hike.locations)
+        {
+            locations.add(LatLng(location.latitude, location.longitude))
+        }
+
+        polyline?.points = locations
+        map?.moveCamera(CameraUpdateFactory.newLatLngZoom(locations[0], DEFAULT_ZOOM))
     }
 
     private fun getPermision()

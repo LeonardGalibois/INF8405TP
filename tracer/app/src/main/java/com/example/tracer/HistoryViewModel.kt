@@ -5,9 +5,13 @@ import com.google.android.gms.maps.model.LatLng
 import java.io.Serializable
 import java.util.Date
 
+data class LatLngData(val latitude: Double = 0.0, val longitude: Double = 0.0) {
+    constructor() : this(0.0, 0.0)
+}
+
 data class Hike(
     val date: Date,
-    val locations: Array<LatLng>,
+    val locations: Array<LatLngData>,
     val meanSpeed: Float,
     val meanAcceleration: Float,
     val stepsCount: Int,
@@ -25,7 +29,7 @@ class HistoryViewModel : ViewModel() {
         history.clear()
 
         //TODO: fetch history
-        history.add(Hike(Date(), arrayOf(LatLng(-34.399, 150.646), LatLng(-34.395, 150.642)), 10.0f, 1.2f, 500, 12.1f))
+        history.add(Hike(Date(), arrayOf(LatLngData(-34.399, 150.646), LatLngData(-34.395, 150.642)), 10.0f, 1.2f, 500, 12.1f))
     }
 
 
