@@ -19,10 +19,12 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -33,6 +35,7 @@ import com.google.android.gms.maps.model.PolylineOptions
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.Date
 import java.util.Timer
 import java.util.TimerTask
 import kotlin.math.pow
@@ -62,6 +65,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
     private lateinit var stepsTextView: TextView
     private lateinit var speedTextView: TextView
     private lateinit var accelerationTextView: TextView
+    val historyViewModel: HistoryViewModel by viewModels()
 
     private var gravity = FloatArray(3)
     private var linearAcceleration = FloatArray(3)
@@ -154,6 +158,19 @@ class HomeFragment : Fragment(), OnMapReadyCallback, LocationListener, SensorEve
 
     // Stop walking/running session
     private fun stop() {
+        val hike = Hike(
+            Date(),
+            listOf(
+                LatLngData(-34.399, 150.646),
+                LatLngData(-34.395, 150.642)
+            ),
+            10.0f,
+            1.2f,
+            500,
+            12.1f
+        )
+
+        historyViewModel.addHikeToDatabase(hike)
         map?.clear()
         reset()
     }

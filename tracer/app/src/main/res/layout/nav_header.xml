@@ -16,9 +16,7 @@
         android:layout_height="150dp"
         android:layout_gravity="start"
         android:scaleType="fitXY"
-        android:background="@color/transparent"
-        android:src="@drawable/empty_profile_picture"/>
-s
+        android:background="@color/transparent" />
     <Space
         android:layout_width="match_parent"
         android:layout_height="20dp" />

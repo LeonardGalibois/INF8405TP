@@ -84,7 +84,7 @@ class HistoryViewFragment : Fragment(), OnMapReadyCallback {
         polyline?.width = DEFAULT_WIDTH
 
         locations = mutableListOf()
-        for(location in hike.locations)
+        for(location in hike.locations!!)
         {
             locations.add(LatLng(location.latitude, location.longitude))
         }
