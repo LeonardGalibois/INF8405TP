@@ -23,7 +23,7 @@ import java.util.Date
 import java.util.Locale
 
 class RegisterActivity : AppCompatActivity() {
-    lateinit var authService: AuthService
+    private lateinit var authService: AuthService
     private lateinit var profilePictureButton: ImageButton
     private var currentPhotoPath: String? = null
     private var capturedImageBitmap: Bitmap? = null

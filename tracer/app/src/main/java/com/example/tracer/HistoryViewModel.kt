@@ -9,12 +9,9 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import java.io.Serializable
 import java.util.Date
 
-data class LatLngData(val latitude: Double = 0.0, val longitude: Double = 0.0) {
-    constructor() : this(0.0, 0.0)
-}
+data class LatLngData(val latitude: Double = 0.0, val longitude: Double = 0.0)
 
 data class Hike(
     var date: Date? = null,
@@ -51,7 +48,7 @@ class HistoryViewModel : ViewModel() {
     }
 
     fun addHikeToDatabase(hike: Hike) {
-        val hikesRef = FirebaseDatabase.getInstance().getReference("hikes")
+        hikesRef.keepSynced(true);
         val newHikeRef = hikesRef.push()
 
         // Obtenir l'ID de l'utilisateur actuel à partir de Firebase Auth

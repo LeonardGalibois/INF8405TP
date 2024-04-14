@@ -56,7 +56,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textSize="30dp"
+                        android:textSize="30sp"
                         android:textColor="@color/white"
                         android:textAlignment="center"/>
 
@@ -64,8 +64,8 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="m / s"
-                        android:textSize="20dp"
+                        android:text="@string/speed_units"
+                        android:textSize="20sp"
                         android:textColor="@color/white"
                         android:textAlignment="center"/>
 
@@ -91,7 +91,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textSize="30dp"
+                        android:textSize="30sp"
                         android:textColor="@color/white"
                         android:textAlignment="center"/>
 
@@ -99,8 +99,8 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="m / s²"
-                        android:textSize="20dp"
+                        android:text="@string/acceleration_units"
+                        android:textSize="20sp"
                         android:textColor="@color/white"
                         android:textAlignment="center"/>
 
@@ -126,7 +126,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textSize="30dp"
+                        android:textSize="30sp"
                         android:textColor="@color/white"
                         android:textAlignment="center"/>
 
@@ -134,8 +134,8 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Steps"
-                        android:textSize="20dp"
+                        android:text="@string/steps"
+                        android:textSize="20sp"
                         android:textColor="@color/white"
                         android:textAlignment="center"/>
 
@@ -161,7 +161,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textSize="30dp"
+                        android:textSize="30sp"
                         android:textColor="@color/white"
                         android:textAlignment="center"/>
 
@@ -169,8 +169,8 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="°C"
-                        android:textSize="20dp"
+                        android:text="@string/temperature_units"
+                        android:textSize="20sp"
                         android:textColor="@color/white"
                         android:textAlignment="center"/>
 

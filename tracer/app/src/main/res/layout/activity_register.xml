@@ -17,7 +17,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Create Account"
+            android:text="@string/create_account"
             android:textAlignment="center"
             android:textSize="30sp"/>
 
@@ -43,7 +43,7 @@
             android:id="@+id/user_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="User" />
+            android:hint="@string/user_placeholder" />
 
         <Space
             android:layout_width="match_parent"
@@ -54,7 +54,7 @@
             android:id="@+id/password_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
+            android:hint="@string/password_placeholder"
             android:inputType="textPassword"/>
 
         <Space
@@ -72,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:background="@color/transparent"
-                android:text="Sign in"
+                android:text="@string/sign_in"
                 android:textColor="@color/black"/>
 
             <Space
@@ -85,7 +85,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
-                android:text="Register"/>
+                android:text="@string/register"/>
 
         </LinearLayout>
 
