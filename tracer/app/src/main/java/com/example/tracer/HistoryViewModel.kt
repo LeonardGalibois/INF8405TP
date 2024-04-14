@@ -34,21 +34,29 @@ class HistoryViewModel : ViewModel() {
     private val hikesListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             history.clear()
-            for (hikeSnapshot in snapshot.children) {
-                val hike = hikeSnapshot.getValue(Hike::class.java)
-                val userId = FirebaseAuth.getInstance().currentUser?.uid
-                if (hike?.userId == userId) {
-                    hike?.let { history.add(it) }
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+            val query = hikesRef.orderByChild("userId").equalTo(userId)
+            query.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    for (hikeSnapshot in dataSnapshot.children) {
+                        val hike = hikeSnapshot.getValue(Hike::class.java)
+                        hike?.let { history.add(it) }
+                    }
+                    // Notifier les observateurs que les données ont changé
+                    // Utilisation de LiveData ou d'autres méthodes de notification ici
                 }
-            }
-            // Notifier les observateurs que les données ont changé
-            // Utilisation de LiveData ou d'autres méthodes de notification ici
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Gérer les erreurs d'annulation
+                }
+            })
         }
 
         override fun onCancelled(error: DatabaseError) {
             // Gérer les erreurs d'annulation
         }
     }
+
 
     fun addHikeToDatabase(hike: Hike) {
         val hikesRef = FirebaseDatabase.getInstance().getReference("hikes")
